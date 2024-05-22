@@ -20,7 +20,7 @@ export class NavBarComponent {
 
   onLogoutClick(): void {
     localStorage.clear();
-    this.router.navigate(["/home"]);
+    this.router.navigate(["/"]);
   }
 
 }

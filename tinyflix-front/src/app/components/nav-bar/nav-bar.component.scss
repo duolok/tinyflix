@@ -8,7 +8,7 @@
   top: 0;
   right: 0;
   padding: 2em 3em;
-  gap: 1em;
+  gap: 0.6em;
   z-index: 9999;
 }
 
@@ -21,7 +21,7 @@
   text-decoration: none;
   border: 1px solid #fff;
   padding: 0.1em;
-  color: #1e1e1e;
+  color: #fff;
   border-radius: 4px;
   width: 1.5em;
   height: 1.5em;
@@ -73,6 +73,6 @@
 
   &:hover {
     background-color: #003d71;
-    border: 2px solid #ffffff;
+    border: 2px solid #1e1e1e;
   }
 }
