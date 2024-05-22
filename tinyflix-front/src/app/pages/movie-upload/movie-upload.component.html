@@ -1,0 +1,40 @@
+<app-nav-bar></app-nav-bar>
+<div class="container">
+  <h2>New Movie</h2>
+  <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="file">Odaberi datoteku:</label>
+      <input type="file" id="file" (change)="onFileChange($event)" />
+    </div>
+    <div class="form-group">
+      <label for="title">Naslov:</label>
+      <input type="text" id="title" formControlName="title" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label for="description">Opis:</label>
+      <textarea id="description" formControlName="description" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="actors">Glumci:</label>
+      <input type="text" id="actors" formControlName="actors" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label for="directors">Režiseri:</label>
+      <input type="text" id="directors" formControlName="directors" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label for="genres">Žanrovi:</label>
+      <input type="text" id="genres" formControlName="genres" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="uploadForm.invalid">Postavi</button>
+  </form>
+
+  <div *ngIf="fileMetadata">
+    <h3>Metapodaci:</h3>
+    <p><strong>Naziv datoteke:</strong> {{ fileMetadata.name }}</p>
+    <p><strong>Tip datoteke:</strong> {{ fileMetadata.type }}</p>
+    <p><strong>Veličina datoteke:</strong> {{ fileMetadata.size }} bytes</p>
+    <p><strong>Vreme nastanka:</strong> {{ fileMetadata.creationTime }}</p>
+    <p><strong>Vreme poslednje izmene:</strong> {{ fileMetadata.lastModified }}</p>
+  </div>
+</div>
