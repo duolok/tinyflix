@@ -1,0 +1,61 @@
+.icon-bar-horizontal {
+  z-index: 1000;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 0 1em;
+  height: 65px;
+  z-index: 9999; 
+}
+
+.icon-bar-horizontal a {
+  display: block;
+  text-align: center;
+  padding: 16px 18px;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 1.5em;
+  text-decoration: none;
+}
+
+.icon-bar-horizontal a:hover {
+  color: #742721;
+}
+
+.icon-bar-horizontal a.active {
+  color: #00B3B3;
+}
+
+.logout-link {
+  transform: scaleY(-1);
+  color: white;
+  text-decoration: none;
+}
+
+.header {
+  font-family: bayon;
+  letter-spacing: 1px;
+  font-weight: regular;
+  margin: 0;
+  font-size: 3.5em;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: inline-block;
+  margin-left: 2em;
+  margin-top: 0.5em;
+  text-shadow:
+    0 0 10px #83c5be,
+    0 0 20px #006d77;
+  z-index: 9999;
+}
+
+.logout-button {
+  display: block; /* Hide the old logout button */
+  color: white;
+}
