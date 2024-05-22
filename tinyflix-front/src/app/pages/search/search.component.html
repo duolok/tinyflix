@@ -1,0 +1,21 @@
+<div class="search-page">
+  <app-header></app-header>
+  <div class="banner">
+    <img
+      class="banner-img"
+      src="https://preview.redd.it/dn3ahezhvy241.jpg?width=7096&format=pjpg&auto=webp&s=1e190a27ad1a140de7b7961d5c32c9851b946e2a"
+    />
+    <div class="banner-info-movies">
+      <h4 class="banner-heading">Ad Astra</h4>
+      <p class="banner-description">Astronaut Roy McBride undertakes a mission across an unforgiving solar system to uncover the truth about his missing father and his doomed expedition that now, 30 years later, threatens the universe.</p>
+      <div class="banner-actions">
+        <button class="play-btn">Play</button>
+        <button class="info-btn">More Info</button>
+      </div>
+    </div>
+  </div>
+  <div class="movie-categories px-20 relative z-50 -mt-40">
+    <app-movie-category [title]="'Trending'"></app-movie-category>
+    <app-movie-category [title]="'New release'"></app-movie-category>
+  </div>
+</div>

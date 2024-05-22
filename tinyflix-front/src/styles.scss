@@ -1,0 +1,40 @@
+@import 'ngx-toastr/toastr';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  overflow-x: hidden;
+}
+
+@font-face {
+  font-family: 'bayon';
+  src: url('./assets/fonts/bayon.ttf') format('truetype'); }
+
+@font-face {
+  font-family: 'rubik-regular';
+  src: url('./assets/fonts/rubik/Rubik-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'rubik-light';
+  src: url('./assets/fonts/rubik/Rubik-Light.ttf') format('truetype');
+}
+
+
+@font-face {
+  font-family: 'rubik-bold';
+  src: url('./assets/fonts/rubik/Rubik-SemiBold.ttf') format('truetype');
+}
+
+.backgroundImage {
+  background-image: url("../src/assets/wallpaper.jpg");
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-size: cover;
+}
+
+.toast-success {
+    background-color: #006d77;
+}
+
