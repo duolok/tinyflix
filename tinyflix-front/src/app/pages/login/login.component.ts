@@ -35,4 +35,8 @@ export class LoginComponent {
     this.loginService.login(this.email, this.password);
     this.router.navigateByUrl('/search');
   }
+
+  openSignUp() {
+    this.router.navigateByUrl('/sign-up');
+  }
 }
