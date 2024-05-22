@@ -1,37 +1,17 @@
 <div class="flex container">
   <h1 class="header text-red-600">tinyflix</h1>
   <nav class="icon-bar-horizontal">
-    <a [ngClass]="{ active: router.url == '/home' }" routerLink="home">
-      <i class="cil-energy"> </i>
-    </a>
-    <a [ngClass]="{ active: router.url == '/search' }" routerLink="search"
-      ><i class="cil-search"></i
+    <a [ngClass]="{ active: router.url == '/search' }" routerLink="home"
+      ><i class="cil-home"></i
     ></a>
     <a
       [ngClass]="{ active: router.url == '/notifications' }"
       routerLink="notifications"
-      ><i class="cil-bell"></i
+      ><i class="cil-bookmark"></i
     ></a>
     <a [ngClass]="{ active: router.url == '/favorites' }" routerLink="favorites"
-      ><i class="cil-heart"></i
+      ><i class="cil-plus"></i
     ></a>
-    <a [ngClass]="{ active: router.url == '/profile' }" routerLink="profile"
-      ><i class="at-account"></i
-    ></a>
-
-    <a [ngClass]="{ active: router.url == '/home' }" routerLink="home"
-      ><i class="cil-home"></i
-    ></a>
-    <a [ngClass]="{ active: router.url == '/profile' }" routerLink="profile"
-      ><i class="at-account"></i
-    ></a>
-
-    <a
-      [ngClass]="{ active: router.url == '/logout' }"
-      routerLink="home"
-      class="logout-link"
-      (click)="onLogoutClick()"
-      ><i class="cil-account-logout"></i
-    ></a>
+    <button class="logout-button" (click)="onLogoutClick()">Logout</button>
   </nav>
 </div>
