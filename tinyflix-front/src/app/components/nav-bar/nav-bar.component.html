@@ -1,15 +1,15 @@
 <div class="flex container">
   <h1 class="header text-red-600">tinyflix</h1>
   <nav class="icon-bar-horizontal">
-    <a [ngClass]="{ active: router.url == '/search' }" routerLink="home"
+    <a [ngClass]="{ active: router.url == '/search' }" routerLink="search" href="#"
       ><i class="cil-home"></i
     ></a>
     <a
       [ngClass]="{ active: router.url == '/notifications' }"
-      routerLink="notifications"
+      routerLink="notifications" href="#"
       ><i class="cil-bookmark"></i
     ></a>
-    <a [ngClass]="{ active: router.url == '/favorites' }" routerLink="favorites"
+    <a [ngClass]="{ active: router.url == '/movie-upload' }" routerLink="movie-upload" href="movie-upload"
       ><i class="cil-plus"></i
     ></a>
     <button class="logout-button" (click)="onLogoutClick()">Logout</button>
