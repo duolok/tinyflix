@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { LoginService } from '../../services/login.service';
 import { HeaderComponent } from '../../components/header/header.component';
+import { NavBarComponent } from '../../components/nav-bar/nav-bar.component';
 import { MovieCategoryComponent } from '../../components/movie-category/movie-category.component';
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [HeaderComponent, MovieCategoryComponent],
+  imports: [HeaderComponent, MovieCategoryComponent, NavBarComponent],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss'
 })
