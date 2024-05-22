@@ -13,6 +13,10 @@ export class LoginService {
     localStorage.setItem("token", Math.random() + "")
   }
 
+  logout() {
+    localStorage.clear()
+  }
+
   isLoggedIn() {
     if(localStorage.getItem('token')) {
       return true;
