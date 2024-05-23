@@ -1,72 +1,78 @@
-<app-nav-bar></app-nav-bar>
-<div class="container">
-  <h2>New Movie</h2>
-  <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="file">File:</label>
-      <input type="file" id="file" (change)="onFileChange($event)" />
-    </div>
-    <div class="form-group">
-      <label for="title">Name:</label>
-      <input
-        type="text"
-        id="title"
-        formControlName="title"
-        class="form-control"
-      />
-    </div>
-    <div class="form-group">
-      <label for="description">Description:</label>
-      <textarea
-        id="description"
-        formControlName="description"
-        class="form-control"
-      ></textarea>
-    </div>
-    <div class="form-group">
-      <label for="actors">Actors:</label>
-      <input
-        type="text"
-        id="actors"
-        formControlName="actors"
-        class="form-control"
-      />
-    </div>
-    <div class="form-group">
-      <label for="directors">Directors:</label>
-      <input
-        type="text"
-        id="directors"
-        formControlName="directors"
-        class="form-control"
-      />
-    </div>
-    <div class="form-group">
-      <label for="genres">Genres:</label>
-      <input
-        type="text"
-        id="genres"
-        formControlName="genres"
-        class="form-control"
-      />
-    </div>
-    <button
-      type="submit"
-      class="btn btn-primary"
-      [disabled]="uploadForm.invalid"
-    >
-      Upload
-    </button>
-  </form>
+<div class="h-screen backgroundImagePopcorn">
+  <app-nav-bar></app-nav-bar>
+  <div class="container">
+    <h2>New Movie</h2>
+    <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="file">File:</label><br />
+        <input
+          type="file"
+          class="file-input"
+          id="file"
+          (change)="onFileChange($event)"
+        />
+        <label for="file" class="file-label">Choose File</label>
+      </div>
+      <div class="form-group">
+        <label for="title">Name:</label>
+        <input
+          type="text"
+          id="title"
+          formControlName="title"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="form-control"
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label for="actors">Actors:</label>
+        <input
+          type="text"
+          id="actors"
+          formControlName="actors"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group">
+        <label for="directors">Directors:</label>
+        <input
+          type="text"
+          id="directors"
+          formControlName="directors"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group">
+        <label for="genres">Genres:</label>
+        <input
+          type="text"
+          id="genres"
+          formControlName="genres"
+          class="form-control"
+        />
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="uploadForm.invalid"
+      >
+        Upload
+      </button>
+    </form>
 
-  <div *ngIf="fileMetadata">
-    <h3>Metapodaci:</h3>
-    <p><strong>Naziv datoteke:</strong> {{ fileMetadata.name }}</p>
-    <p><strong>Tip datoteke:</strong> {{ fileMetadata.type }}</p>
-    <p><strong>Veličina datoteke:</strong> {{ fileMetadata.size }} bytes</p>
-    <p><strong>Vreme nastanka:</strong> {{ fileMetadata.creationTime }}</p>
-    <p>
-      <strong>Vreme poslednje izmene:</strong> {{ fileMetadata.lastModified }}
-    </p>
+    <div *ngIf="fileMetadata">
+      <h3>Metapodaci:</h3>
+      <p><strong>File name:</strong> {{ fileMetadata.name }}</p>
+      <p><strong>File type:</strong> {{ fileMetadata.type }}</p>
+      <p><strong>File size:</strong> {{ fileMetadata.size }} bytes</p>
+      <p><strong>Creation time:</strong> {{ fileMetadata.creationTime }}</p>
+      <p><strong>Last modified:</strong> {{ fileMetadata.lastModified }}</p>
+    </div>
   </div>
 </div>
