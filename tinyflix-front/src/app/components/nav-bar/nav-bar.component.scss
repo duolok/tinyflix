@@ -65,7 +65,7 @@
   display: flex;
   border-radius: 4px;
   font-family: rubik-regular;
-  border: 2px solid rgba(255,255,255,);
+  border: 1px solid rgba(255,255,255,);
   color: white;
   border-radius: 4px;
   width: 5em;
@@ -73,6 +73,6 @@
 
   &:hover {
     background-color: #006d77;
-    border: 2px solid #fff;
+    border: 1px solid #fff;
   }
 }
