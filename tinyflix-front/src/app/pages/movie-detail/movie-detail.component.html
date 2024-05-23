@@ -1,8 +1,16 @@
+<app-nav-bar></app-nav-bar>
 <div class="movie-detail" *ngIf="movie">
+
   <h1>{{ movie.title }}</h1>
+
+  <video controls>
+    <source [src]="movie.fileUrl" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
   <p>{{ movie.description }}</p>
   <p><strong>Director:</strong> {{ movie.director }}</p>
-  <p><strong>Cast:</strong> {{ movie.cast.join(', ') }}</p>
+  <p><strong>Cast:</strong> {{ movie.cast.join(", ") }}</p>
   <p><strong>Release Date:</strong> {{ movie.releaseDate }}</p>
   <p><strong>Duration:</strong> {{ movie.duration }}</p>
 
@@ -13,9 +21,4 @@
   <div *ngIf="role === 'admin'">
     <button (click)="updateMovie()">Update Movie</button>
   </div>
-
-  <video controls>
-    <source [src]="movie.fileUrl" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
 </div>
