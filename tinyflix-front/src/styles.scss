@@ -1,4 +1,4 @@
-@import 'ngx-toastr/toastr';
+@import "ngx-toastr/toastr";
 @import "../node_modules/@coreui/icons/css/free.css";
 
 @tailwind base;
@@ -9,25 +9,30 @@ body {
   overflow-x: hidden;
   background-color: #1e1e1e;
 }
-
-@font-face {
-  font-family: 'bayon';
-  src: url('./assets/fonts/bayon.ttf') format('truetype'); }
-
-@font-face {
-  font-family: 'rubik-regular';
-  src: url('./assets/fonts/rubik/Rubik-Regular.ttf') format('truetype');
+html,
+body {
+  height: 100%;
+  margin: 0;
 }
 
 @font-face {
-  font-family: 'rubik-light';
-  src: url('./assets/fonts/rubik/Rubik-Light.ttf') format('truetype');
+  font-family: "bayon";
+  src: url("./assets/fonts/bayon.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "rubik-regular";
+  src: url("./assets/fonts/rubik/Rubik-Regular.ttf") format("truetype");
+}
 
 @font-face {
-  font-family: 'rubik-bold';
-  src: url('./assets/fonts/rubik/Rubik-SemiBold.ttf') format('truetype');
+  font-family: "rubik-light";
+  src: url("./assets/fonts/rubik/Rubik-Light.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "rubik-bold";
+  src: url("./assets/fonts/rubik/Rubik-SemiBold.ttf") format("truetype");
 }
 
 .backgroundImage {
@@ -37,7 +42,31 @@ body {
   background-size: cover;
 }
 
-.toast-success {
-    background-color: #006d77;
+.backgroundImagePopcorn {
+  position: relative;
+  background-image: url("../src/assets/popcorn.jpg");
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-size: cover;
+  width: 100%;  
+  height: 100%; 
 }
 
+.backgroundImagePopcorn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: 1;
+}
+
+.backgroundImagePopcorn > * {
+  position: relative;
+  z-index: 2;
+}
+.toast-success {
+  background-color: #006d77;
+}
