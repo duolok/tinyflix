@@ -1,52 +1,111 @@
-$primary-color: #e50914; 
-$background-color: #141414; 
-$text-color: #ffffff; 
-$secondary-color: #b3b3b3; 
+$primary-color: #006d77;
+$background-color: #141414;
+$text-color: #ffffff;
+$secondary-color: #b3b3b3;
+$hover-darken: 10%;
+$transition-time: 0.3s;
+
+.movie-detail-container {
+  display: flex;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  justify-content: center;
+  align-items: center;
+  padding-top: 5em;
+}
 
 .movie-detail {
-  background-color: $background-color;
-  color: white;
-  padding: 2em;
-  border-radius: 10px;
-  max-width: 800px;
-  margin: 2em auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: space-between;
+  font-family: Arial, sans-serif;
+  padding: 5em;
 
-  h1 {
-    font-size: 3em;
-    margin-bottom: 0.5em;
-    color: $primary-color;
-  }
+  .movie-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
 
-  p {
-    font-size: 1.2em;
-    margin: 0.5em 0;
+    video {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
 
-    strong {
-      color: $secondary-color;
+    .actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1em;
+      font-size: 1.2em;
+      margin-top: 1em;
+
+      button {
+        background-color: $primary-color;
+        border: none;
+        padding: 0.7em 1.5em;
+        font-size: 1.2em;
+        border-radius: 5px;
+        color: $text-color;
+        cursor: pointer;
+        transition: background-color $transition-time ease;
+
+        &:hover {
+          background-color: darken($primary-color, $hover-darken);
+        }
+      }
     }
   }
 
-  button {
-    background-color: $primary-color;
-    border: none;
-    padding: 0.7em 1.5em;
-    margin: 0.5em 0.5em 0.5em 0;
-    border-radius: 5px;
-    color: $text-color;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background-color: darken($primary-color, 10%);
-    }
-  }
-
-  video {
-    display: block;
-    width: 100%;
-    margin-top: 1em;
+  .movie-info {
+    width: 45%;
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(20, 20, 20, 0.8);
     border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+
+    h1 {
+      font-family: bayon;
+      letter-spacing: 1px;
+      font-weight: regular;
+      margin: 0;
+      font-size: 3.5em;
+      color: white;
+      display: inline-block;
+      margin-left: 2em;
+      margin-top: 0.5em;
+      text-shadow:
+        0 0 10px #83c5be,
+        0 0 20px #006d77;
+      z-index: 9999;
+    }
+
+    .description,
+    .details {
+      margin-bottom: 1.5em;
+      font-size: 1.2em;
+      width: 100%;
+
+      h2 {
+        font-size: 2.5em;
+        color: $text-color;
+        font-family: bayon;
+        margin-bottom: 0.5em;
+        border-bottom: 2px solid $primary-color;
+        padding-bottom: 0.2em;
+      }
+
+      p {
+        font-size: 1.5em;
+        margin: 0.5em 0;
+        color: $text-color;
+
+        strong {
+          color: $text-color;
+        }
+      }
+    }
   }
 }
