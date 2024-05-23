@@ -1,0 +1,21 @@
+<div class="movie-detail" *ngIf="movie">
+  <h1>{{ movie.title }}</h1>
+  <p>{{ movie.description }}</p>
+  <p><strong>Director:</strong> {{ movie.director }}</p>
+  <p><strong>Cast:</strong> {{ movie.cast.join(', ') }}</p>
+  <p><strong>Release Date:</strong> {{ movie.releaseDate }}</p>
+  <p><strong>Duration:</strong> {{ movie.duration }}</p>
+
+  <button (click)="playMovie()">Play Movie</button>
+  <button (click)="downloadMovie()">Download Movie</button>
+  <button (click)="addBookmark()">Add Bookmark</button>
+
+  <div *ngIf="role === 'admin'">
+    <button (click)="updateMovie()">Update Movie</button>
+  </div>
+
+  <video controls>
+    <source [src]="movie.fileUrl" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
