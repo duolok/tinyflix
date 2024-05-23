@@ -49,13 +49,22 @@
         />
       </div>
       <div class="form-group">
-        <label for="genres">Genres:</label>
-        <input
-          type="text"
-          id="genres"
-          formControlName="genres"
-          class="form-control"
-        />
+        <label>Genres:</label>
+        <div class="checkbox-group">
+          <div>
+            <input type="checkbox" id="genre_romance" formControlName="genre_romance" />
+            <label for="genre_romance">Romance</label>
+          </div>
+          <div>
+            <input type="checkbox" id="genre_action" formControlName="genre_action" />
+            <label for="genre_action">Action</label>
+          </div>
+          <div>
+            <input type="checkbox" id="genre_horror" formControlName="genre_horror" />
+            <label for="genre_horror">Horror</label>
+          </div>
+          <!-- Add more genres as needed -->
+        </div>
       </div>
       <button
         type="submit"
@@ -76,3 +85,4 @@
     </div>
   </div>
 </div>
+
