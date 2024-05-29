@@ -1,7 +1,7 @@
 use crate::models::movie::Movie;
-use aws_sdk_dynamodb::model::AttributeValue;
-use aws_sdk_dynamodb::{Client, Error};
-use std::collectionss::HashMap;
+use aws_sdk_dynamodb::types::AttributeValue;
+use aws_sdk_dynamodb::{Client, Error as DynamoDbError};
+use std::collections::HashMap;
 
 pub struct DynamoDbService {
     client: Client,
@@ -13,7 +13,7 @@ impl DynamoDbService {
         DynamoDbService { client, table_name }
     }
 
-    pub async fn save_movie_metadata(&self, movie: Movie) -> Result<(), Error> {
+    pub async fn save_movie_metadata(&self, movie: Movie) -> Result<(), DynamoDbError> {
         let mut item = HashMap::new();
         item.insert("id".to_string(), AttributeValue::S(movie.id.clone()));
         item.insert("title".to_string(), AttributeValue::S(movie.title.clone()));
@@ -26,14 +26,14 @@ impl DynamoDbService {
         self.client
             .put_item()
             .table_name(&self.table_name)
-            .item(item)
+            .set_item(Some(item))
             .send()
             .await?;
 
-        OK(())
+        Ok(())
     }
 
-    pub async fn get_movie_metadata(&self, movie_id: &str) -> Result<Movie, Error> {
+    pub async fn get_movie(&self, movie_id: &str) -> Result<Movie, DynamoDbError> {
         let response = self
             .client
             .get_item()
@@ -44,26 +44,34 @@ impl DynamoDbService {
 
         if let Some(item) = response.item {
             let movie = Movie {
-                id: item.get("id").unwrap().s().unwrap().to_string(),
-                title: item.get("title").unwrap().s().unwrap().to_string(),
-                genre: item.get("genre").unwrap().s().unwrap().to_string(),
-                director: item.get("director").unwrap().s().unwrap().to_string(),
-                actors: item.get("actors").unwrap().ss().unwrap().to_vec(),
-                rating: item.get("rating").map(|v| v.n().unwrap().parse().unwrap()),
-                s3_path: item.get("s3_path").unwrap().s().unwrap().to_string(),
+                id: item.get("id").and_then(|v| v.as_s().ok()).unwrap().to_string(),
+                title: item.get("title").and_then(|v| v.as_s().ok()).unwrap().to_string(),
+                genre: item.get("genre").and_then(|v| v.as_s().ok()).unwrap().to_string(),
+                director: item.get("director").and_then(|v| v.as_s().ok()).unwrap().to_string(),
+                actors: item
+                    .get("actors")
+                    .and_then(|v| v.as_ss().ok())
+                    .unwrap()
+                    .to_vec(),
+                rating: item
+                    .get("rating")
+                    .and_then(|v| v.as_n().ok())
+                    .and_then(|n| n.parse().ok()),
+                s3_path: item.get("s3_path").and_then(|v| v.as_s().ok()).unwrap().to_string(),
             };
             Ok(movie)
         } else {
-            Err(Error::from("Movie not found"))
+            unimplemented!()
         }
     }
 
-    pub async fn delete_movie_metadata(&self, movie_id: &str) -> Result<(), Error> {
-        self.client.delete_item()
-        .table_name(&self.table_name)
-            .key("id", AttributeValue::S(movie_id.to_string))
+    pub async fn delete_movie(&self, movie_id: &str) -> Result<(), DynamoDbError> {
+        self.client
+            .delete_item()
+            .table_name(&self.table_name)
+            .key("id", AttributeValue::S(movie_id.to_string()))
             .send()
-            .await?;
+        .await?;
         Ok(())
     }
 }
