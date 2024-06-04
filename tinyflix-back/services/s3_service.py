@@ -6,6 +6,9 @@ class S3Service:
         self.client = boto3.client('s3')
         self.bucket_name = bucket_name
 
+    def create_bucket(self):
+        self.client.create_bucket(Bucket=self.bucket_name)
+
     def upload_file(self, key, file_path):
         try:
             self.client.upload_file(file_path, self.bucket_name, key)
@@ -32,3 +35,9 @@ class S3Service:
             print("Credentials not available.")
         return False
 
+    def print_all_buckets(self):
+        [print(f"\t{bucket['Name']}") for bucket in self.client.list_buckets()['Buckets']]
+
+    def print_all_objects(self):
+        print("=== All objects in a bucket ===\n" +
+            "\n".join([f"\t{o['Key']}" for o in self.client.list_objects(Bucket=self.bucket_name)['Contents']]))
