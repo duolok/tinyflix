@@ -12,7 +12,15 @@ class S3Service:
     def upload_file(self, key, file_path):
         try:
             self.client.upload_file(file_path, self.bucket_name, key)
-            return True
+            response = self.client.head_object(Bucket=self.bucket, Key=key)
+            file_metadata = {
+                'file_name': key.split('/')[-1],
+                'file_type': response['ContentType'],
+                'file_size': response['ContentLength'],
+                'creation_time': response['LastModified'].isoformat(),
+                'last_modified_time': response['LastModified'].isoformat()
+            }
+            return True, file_metadata
         except FileNotFoundError:
             print("The file was not found.")
         except NoCredentialsError:
