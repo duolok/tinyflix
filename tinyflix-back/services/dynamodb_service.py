@@ -14,8 +14,8 @@ class DynamoDbService:
         response = self.table.get_item(Key={'id': movie_id}) 
         if 'Item' in response:
             item = response['Item']
-            return Movie(item['id'], item['title'], item['genre'], item['director'], item['actors'], item.get('rating'), item['s3_path'])
-        return None
-    
+               return Movie(item['id'], item['title'], item['genre'], item['director'], item['actors'], item.get('rating'), item['s3_path'],
+                         item['file_name'], item['file_type'], item['file_size'], item['creation_time'], item['last_modified_time'], item.get('description'))
+        return None 
     def delete_movie_metadata(self, movie_id):
         self.table.delete_item(Key={'id': movie_id})
