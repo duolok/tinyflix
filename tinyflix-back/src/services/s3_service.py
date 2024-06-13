@@ -1,5 +1,6 @@
 import boto3
-from botocore.exceptions import NoCredentialsError, FileNotFoundError
+from botocore.exceptions import NoCredentialsError
+from builtins import FileNotFoundError
 
 class S3Service:
     def __init__(self, bucket_name):
@@ -12,7 +13,7 @@ class S3Service:
     def upload_file(self, key, file_path):
         try:
             self.client.upload_file(file_path, self.bucket_name, key)
-            response = self.client.head_object(Bucket=self.bucket, Key=key)
+            response = self.client.head_object(Bucket=self.bucket_name, Key=key)
             file_metadata = {
                 'file_name': key.split('/')[-1],
                 'file_type': response['ContentType'],
@@ -25,7 +26,19 @@ class S3Service:
             print("The file was not found.")
         except NoCredentialsError:
             print("Credentials not available.")
-        return False
+        return False, None
+
+    def generate_presigned_url(self, key, file_type, expiration=3600):
+        try:
+            presigned_url = self.client.generate_presigned_url(
+                'put_object',
+                Params={'Bucket': self.bucket_name, 'Key': key, 'ContentType': file_type},
+                ExpiresIn=expiration
+            )
+            return presigned_url
+        except NoCredentialsError:
+            print("Credentials not available.")
+            return None
 
     def download_file(self, key, destination_path):
         try:
@@ -49,3 +62,4 @@ class S3Service:
     def print_all_objects(self):
         print("=== All objects in a bucket ===\n" +
             "\n".join([f"\t{o['Key']}" for o in self.client.list_objects(Bucket=self.bucket_name)['Contents']]))
+
