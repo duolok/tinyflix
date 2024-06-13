@@ -4,22 +4,20 @@ import os
 from utils import create_response
 from s3_service import S3Service
 
+s3_client = boto3.client('s3')
+
 def lambda_handler(event, context):
-    bucket_name = os.environ.get('MOVIE_BUCKET')
-
-    if not bucket_name:
-        return create_response(500, 'S3 bucket name not configured in environment variables.')
-
-    s3_service = S3Service(bucket_name)
-    
     try:
-        file_name = event['queryStringParameters']['file_name']
-        file_type = event['queryStringParameters']['file_type']
-    except KeyError:
-        return create_response(400, 'Missing file_name or file_type in query parameters.')
-    
-    presigned_url = s3_service.generate_presigned_url(key=file_name, file_type=file_type)
-    if presigned_url:
-        return create_response(200, {'presigned_url': presigned_url})
-    else:
-        return create_response(500, 'Error generating presigned URL.')
+        body = json.loads(event['body'])
+        file_name = body['file_name']
+        bucket_name = os.environ['BUCKET_NAME']
+        
+        presigned_url = s3_client.generate_presigned_url(
+            'put_object',
+            Params={'Bucket': bucket_name, 'Key': file_name},
+            ExpiresIn=3600  # URL expiration time in seconds
+        )
+        
+        return create_response(200, json.dumps({'upload_url': presigned_url}))
+    except Exception as e:
+        return create_response(500, json.dumps({'error': str(e)}))
