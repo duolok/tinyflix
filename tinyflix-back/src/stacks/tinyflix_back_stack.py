@@ -140,6 +140,14 @@ class TinyflixBackStack(Stack):
             [util_layer, service_layer, model_layer]
         )
 
+        create_lambda(
+            "downloadMovieFile",
+            "download_file.lambda_handler",
+            "src/lambda/download_movie_file",
+            "GET",
+            [util_layer, service_layer, model_layer]
+        )
+
         # create_lambda(
         #     "uploadMovieFile",
         #     "upload_movie_file.lambda_handler",
