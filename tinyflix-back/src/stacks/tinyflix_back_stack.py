@@ -8,6 +8,7 @@ from aws_cdk import (
     aws_apigateway as apigateway,
     aws_iam as iam,
     aws_s3 as s3,
+    aws_logs as logs,
 )
 from aws_cdk.aws_lambda_python_alpha import PythonLayerVersion
 
@@ -18,7 +19,7 @@ class TinyflixBackStack(Stack):
 
         movies_table = dynamodb.Table(
             self, "MoviesTable",
-            table_name="serverlesssMoviesTable",
+            table_name="tinyflixMoviesTable",
             partition_key=dynamodb.Attribute(
                 name="name",
                 type=dynamodb.AttributeType.STRING
@@ -28,7 +29,7 @@ class TinyflixBackStack(Stack):
         )
 
         movie_bucket = s3.Bucket(
-            self, "MovieBucket",
+            self, "tinyflixMovieBucket",
             bucket_name="serverless-movie-bucket",
         )
 
@@ -71,6 +72,7 @@ class TinyflixBackStack(Stack):
         )
 
         def create_lambda(id, handler, include_dir, method, layers):
+            print(f"Creating Lambda function with id: {id}, handler: {handler}, directory: {include_dir}")
             function = _lambda.Function(
                 self, id,
                 runtime=_lambda.Runtime.PYTHON_3_9,
@@ -92,7 +94,8 @@ class TinyflixBackStack(Stack):
                     'MOVIE_TABLE': movies_table.table_name,
                     'MOVIE_BUCKET': movie_bucket.bucket_name
                 },
-                role=lambda_role
+                role=lambda_role,
+                log_retention=logs.RetentionDays.ONE_WEEK
             )
             fn_url = function.add_function_url(
                 auth_type=_lambda.FunctionUrlAuthType.NONE,
@@ -121,16 +124,22 @@ class TinyflixBackStack(Stack):
             compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
         )
 
-        # Create Lambda functions
         create_lambda(
             "uploadMovieMetadata",
-            "upload_movie.upload_movie_metadata.lambda_handler",
-            "src/lambda/upload_movie",
+            "upload_metadata.lambda_handler",
+            "src/lambda/upload_movie_metadata",
             "POST",
             [util_layer, service_layer, model_layer]
         )
 
-        # Uncomment and create other Lambdas as needed
+        create_lambda(
+            "uploadMovieFile",
+            "upload_file.lambda_handler",
+            "src/lambda/upload_movie_file",
+            "POST",
+            [util_layer, service_layer, model_layer]
+        )
+
         # create_lambda(
         #     "uploadMovieFile",
         #     "upload_movie_file.lambda_handler",
