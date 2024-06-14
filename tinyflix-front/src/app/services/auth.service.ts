@@ -11,6 +11,7 @@ export interface IUser {
     firstName: string;
     lastName: string;
     birthdate: string;
+    role: string;
 }
 
 @Injectable({
@@ -34,7 +35,6 @@ export class AuthService {
     }
 
     public signUp(user: IUser): Promise<any> {
-        console.log("User Data: ", user);
         return Auth.signUp({
             username: user.email,
             password: user.password,
@@ -43,6 +43,7 @@ export class AuthService {
                 name : user.firstName,
                 family_name: user.lastName,
                 nickname: user.username,
+                'custom:role': 'User',
             }
         }).then(result => {
                 console.log("Sign Up Success: ", result);
