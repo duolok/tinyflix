@@ -8,8 +8,6 @@ export class LoginService {
   constructor() { }
 
   login(email: string, password: string) {
-    // call api here
-    // set token
     localStorage.setItem("token", Math.random() + "")
   }
 
