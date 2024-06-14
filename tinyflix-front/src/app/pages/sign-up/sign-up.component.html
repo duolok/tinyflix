@@ -4,13 +4,13 @@
     <div class="login-card">
       <h2 class="heading">Sign Up</h2>
 
-      <form (ngSubmit)="onSubmit()">
+      <form (ngSubmit)="signUp()">
         <div class="form-field">
           <input
             type="text"
             class="input"
             name="firstName"
-            [(ngModel)]="firstName"
+            [(ngModel)]="user.firstName"
             placeholder="First Name"
             required
           />
@@ -21,7 +21,7 @@
             type="text"
             class="input"
             name="lastName"
-            [(ngModel)]="lastName"
+            [(ngModel)]="user.lastName"
             placeholder="Last Name"
             required
           />
@@ -32,7 +32,7 @@
             type="date"
             class="input"
             name="birthday"
-            [(ngModel)]="birthday"
+            [(ngModel)]="user.birthdate"
             placeholder="Birthday"
             required
           />
@@ -43,7 +43,7 @@
             type="text"
             class="input"
             name="username"
-            [(ngModel)]="username"
+            [(ngModel)]="user.username"
             placeholder="Username"
             required
           />
@@ -54,7 +54,7 @@
             type="email"
             class="input"
             name="email"
-            [(ngModel)]="email"
+            [(ngModel)]="user.email"
             placeholder="Email"
             required
           />
@@ -65,7 +65,7 @@
             type="password"
             class="input"
             name="password"
-            [(ngModel)]="password"
+            [(ngModel)]="user.password"
             placeholder="Password"
             required
           />
@@ -79,6 +79,16 @@
           <button class="login-btn">Sign Up</button>
         </div>
       </form>
+
+      <div *ngIf="isVerification" class="verification-container">
+        <h2 class="heading">Verification</h2>
+        <div class="form-field">
+          <input type="text" class="input" placeholder="Verification Code" id="verifyCode" [(ngModel)]="verificationCode">
+        </div>
+        <div class="action-field">
+          <button class="login-btn" type="button" (click)="confirmSignUp()">Verify</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
