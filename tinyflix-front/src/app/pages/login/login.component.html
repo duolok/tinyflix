@@ -10,7 +10,7 @@
             type="text"
             class="input"
             name="email"
-            [(ngModel)]="email"
+            [(ngModel)]="user.email"
             placeholder="Email or Username"
           />
         </div>
@@ -20,7 +20,7 @@
               [type]="passwordVisible ? 'text' : 'password'"
               class="input"
               name="Password"
-              [(ngModel)]="password"
+              [(ngModel)]="user.password"
               placeholder="Password"
               />
           <span (click)="togglePasswordVisibility()" class="eye-icon">
