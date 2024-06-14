@@ -75,3 +75,15 @@
   margin-bottom: 1.2em;
 
 }
+
+.form-field {
+  position: relative;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
