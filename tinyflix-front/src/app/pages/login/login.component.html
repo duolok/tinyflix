@@ -11,18 +11,21 @@
             class="input"
             name="email"
             [(ngModel)]="email"
-            placeholder="Email"
+            placeholder="Email or Username"
           />
         </div>
 
         <div class="form-field">
           <input
-            type="text"
-            class="input"
-            name="Password"
-            [(ngModel)]="password"
-            placeholder="Password"
-          />
+              [type]="passwordVisible ? 'text' : 'password'"
+              class="input"
+              name="Password"
+              [(ngModel)]="password"
+              placeholder="Password"
+              />
+          <span (click)="togglePasswordVisibility()" class="eye-icon">
+            <i [ngClass]="passwordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+          </span>
         </div>
 
         <div class="sign-up-link">
