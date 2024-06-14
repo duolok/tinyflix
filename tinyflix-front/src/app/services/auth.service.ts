@@ -25,7 +25,7 @@ export class AuthService {
     }
 
     public signIn(user: IUser): Promise<any> {
-        return Auth.signIn(user.username, user.password);
+        return Auth.signIn(user.email, user.password);
     }
 
     public signOut(): Promise<any> {
@@ -70,4 +70,3 @@ export class AuthService {
         return Auth.confirmSignUp(user.email, code);
     }
 }
-
