@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { LoginService } from '../../services/login.service';
 import { HeaderComponent } from '../../components/header/header.component';
+import { IUser, AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -17,13 +18,27 @@ import { HeaderComponent } from '../../components/header/header.component';
 export class LoginComponent {
   email!: string;
   password!: string;
+  loading: boolean;
+  passwordVisible: boolean = false;
+  user: IUser;
 
-  constructor(private loginService: LoginService, private router: Router, private toastrService: ToastrService) {}
+  constructor(
+    private loginService: LoginService,
+    private authService: AuthService,
+    private router: Router,
+    private toastrService: ToastrService) {
+    this.loading = false;
+    this.user = {} as IUser;
+  }
 
   ngOnInit() {
     if(this.loginService.isLoggedIn()) {
       this.router.navigateByUrl('/search');
     }
+  }
+
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
   }
 
   onSubmit() {
