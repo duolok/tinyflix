@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { LoginService } from '../../services/login.service';
 import { HeaderComponent } from '../../components/header/header.component';
+import { IUser, AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -15,18 +16,35 @@ import { HeaderComponent } from '../../components/header/header.component';
   styleUrl: './sign-up.component.scss',
 })
 export class SignUpComponent {
-  firstName!: string;
-  lastName!: string;
-  birthday!: Date;
-  email!: string;
-  username!: string;
-  password!: string;
+  loading: boolean;
+  isSignIn: boolean = true;
+  isVerification: boolean = false;
+
+  isConfirmed: boolean;
+  verificationEmail: string = '';
+  verificationCode: string = '';
+  user: IUser;
+
 
   constructor(
     private loginService: LoginService,
+    private authService: AuthService,
     private router: Router,
     private toastrService: ToastrService,
-  ) {}
+  ) {
+    this.loading = false;
+    this.isConfirmed = false;
+    this.user = {} as IUser;
+  }
+
+  toggleVerification() {
+    if (!this.isSignIn) this.toggleSignUp()
+    this.isVerification = !this.isVerification
+  }
+
+  toggleSignUp() {
+    this.isSignIn = !this.isSignIn
+  }
 
   ngOnInit() {
     if (this.loginService.isLoggedIn()) {
@@ -34,15 +52,29 @@ export class SignUpComponent {
     }
   }
 
-  onSubmit() {
-    if (!this.firstName || !this.lastName || !this.birthday || !this.email || !this.username || !this.password) {
-      this.toastrService.error('All fields are required!');
-      return;
-    }
-    // You may want to replace this with actual sign-up logic
-    this.toastrService.success('Signed up successfully.');
-    this.loginService.login(this.email, this.password);
-    this.router.navigateByUrl('/search');
+  public signUp(): void {
+    this.loading = true;
+    this.authService.signUp(this.user)
+      .then(() => {
+        this.loading = false;
+        this.isConfirmed = true;
+        this.toastrService.success("Verification link has been sent.");
+        this.toggleVerification();
+      }).catch(() => {
+        this.loading = false;
+      });
+  }
+
+  public confirmSignUp(): void {
+    this.loading = true;
+    this.authService.verifyUser(this.user, this.verificationCode)
+      .then(() => {
+        this.toastrService.success("Verification successful.");
+        this.router.navigate(['/']);
+      }).catch(() => {
+        this.loading = false;
+        this.toggleVerification();
+      });
   }
 
   openLogin() {
