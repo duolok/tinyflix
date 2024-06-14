@@ -31,24 +31,21 @@ export class LoginComponent {
     this.user = {} as IUser;
   }
 
-  ngOnInit() {
-    if(this.loginService.isLoggedIn()) {
-      this.router.navigateByUrl('/search');
-    }
-  }
-
   togglePasswordVisibility() {
     this.passwordVisible = !this.passwordVisible;
   }
 
   onSubmit() {
-    if(!this.email || !this.password) {
-      this.toastrService.error("Provide email or password!");
-      return;
-    }
-    this.toastrService.success("Logged in successfully.");
-    this.loginService.login(this.email, this.password);
-    this.router.navigateByUrl('/search');
+    console.log(this.user);
+    this.loading = true;
+    this.authService.signIn(this.user).then((res) => {
+        this.router.navigateByUrl('/search');
+        this.toastrService.success("Logged in successfully.");
+        localStorage.setItem('token', res.signInUserSession.idToken.jwtToken)
+      }).catch((err) => {
+        this.loading = false;
+        this.toastrService.error("Incorrect username or password.");
+      })
   }
 
   openSignUp() {
