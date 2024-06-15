@@ -1,6 +1,15 @@
 <div [routerLink]="['/movie', movie.name]" class="movie-card">
-  <img mat-card-image [src]="movie.imageUrl" alt="movie image">
-  <h4 class="card-title">{{ movie.title }}</h4>
-  <p class="card-description">{{ movie.description }}</p>
+  <div class="gradient">
+    <div class="gradient-overlay"></div>
+    <img mat-card-image [src]="movie.imageUrl" alt="movie image">
+  </div>
+  <div class="wrapper">
+    <h4 class="card-title">{{ movie.title }}</h4>
+    <div class="mini-info">
+      <span class="release-year">{{ movie.releaseDate }}</span>
+      <span class="duration">{{ movie.duration }}</span>
+    </div>
+    <div class="play-icon">▶</div>
+  </div>
 </div>
 
