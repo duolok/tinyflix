@@ -46,11 +46,6 @@ export class MovieUploadComponent {
       formData.append('actors', this.uploadForm.get('actors')?.value);
       formData.append('directors', this.uploadForm.get('directors')?.value);
       formData.append('genres', this.uploadForm.get('genres')?.value);
-
-      // call upload service method here with formData
-      // this.uploadService.uploadMovie(formData).subscribe(response => {
-      //   console.log('Upload successful', response);
-      // });
     }
   }
 }
