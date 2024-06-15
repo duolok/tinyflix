@@ -1,13 +1,25 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule } from "@angular/common";
 import { MovieCardComponent } from '../movie-card/movie-card.component';
+import { MovieService } from '../../services/movie.service'; 
 
 @Component({
   selector: 'app-movie-category',
   standalone: true,
-  imports: [MovieCardComponent],
+  imports: [MovieCardComponent, CommonModule],
   templateUrl: './movie-category.component.html',
-  styleUrl: './movie-category.component.scss'
+  styleUrls: ['./movie-category.component.scss']
 })
-export class MovieCategoryComponent {
-  @Input() title=""
+export class MovieCategoryComponent implements OnInit {
+  @Input() title: string = "";
+  movies: any[] = []; 
+
+  constructor(private movieService: MovieService) {}
+
+  ngOnInit(): void {
+    this.movieService.getMovies().subscribe(movies => {
+      this.movies = movies;
+    });
+  }
 }
+
