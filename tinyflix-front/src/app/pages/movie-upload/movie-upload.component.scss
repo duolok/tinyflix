@@ -1,12 +1,16 @@
 .container {
+  position: fixed;
   color: #fff;
-  height: 100vh;
+  margin-top: 5em;
+  top: 10em;
+  left: 3em;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 0 2em;
   margin-left: 5rem;
-  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 h2 {
