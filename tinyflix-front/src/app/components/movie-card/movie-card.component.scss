@@ -1,4 +1,7 @@
 .movie-card {
+  width: 100%;
+  height: 100%;
+  transition: transform .37s ease-in-out;
 
   .card-title {
     bottom: 8px;
@@ -20,7 +23,6 @@
 
   &:hover {
     transform: scale(1.3);
-    transition: all .3s ease-in-out;
     .card-title {
       display: flex;
     }
@@ -29,3 +31,4 @@
     }
   }
 }
+
