@@ -8,19 +8,15 @@ def lambda_handler(event, context):
     file_key = event['file_key']
 
     try:
-        # Generate a presigned URL for the S3 object
         presigned_url = s3_client.generate_presigned_url('get_object',
                                                          Params={'Bucket': bucket_name, 'Key': file_key},
-                                                         ExpiresIn=3600)  # URL valid for 1 hour
-
+                                                         ExpiresIn=3600)  
         return {
             'statusCode': 200,
             'body': json.dumps({'presigned_url': presigned_url})
         }
-
     except Exception as e:
         return {
             'statusCode': 500,
             'body': json.dumps(f'Error: {str(e)}')
         }
-
