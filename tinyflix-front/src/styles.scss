@@ -10,6 +10,11 @@ body {
   background-color: #1e1e1e;
 }
 
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
 
 @font-face {
   font-family: "bayon";
@@ -75,7 +80,6 @@ body {
   position: relative;
   z-index: 2;
 }
-
 .toast-success {
   background-color: #007d77;
 }
