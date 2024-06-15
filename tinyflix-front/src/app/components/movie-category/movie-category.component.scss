@@ -2,7 +2,7 @@
   justify-content: center;
   position: relative;
   min-width: 100%;
-  padding: 3em 5em;
+  padding: 3em 2em;
   height: 26rem;
 }
 
@@ -17,6 +17,6 @@
 
 .container-inner {
   display: flex;
-  justify-content: center;
   flex-direction: row;
+  justify-content: center;
 }
