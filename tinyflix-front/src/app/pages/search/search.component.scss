@@ -1,6 +1,5 @@
 .search-page {
   background-color: #1e1e1e;
-
   .banner {
     height: 100vh;
     width: 100vw;
@@ -51,7 +50,8 @@
   }
 
   .movie-categories {
-    height: 100vh;
+    height: 120vh;
+    gap: 10em;
     justify-content: center;
     display: flex;
     flex-direction: column;
