@@ -4,17 +4,27 @@
     <h2>New Movie</h2>
     <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="file">File:</label><br />
+        <label for="movieFile">Movie File:</label><br />
         <input
           type="file"
           class="file-input"
-          id="file"
-          (change)="onFileChange($event)"
+          id="movieFile"
+          (change)="onFileChange($event, 'movie')"
         />
-        <label for="file" class="file-label">Choose File</label>
+        <label for="movieFile" class="file-label">Choose Movie File</label>
       </div>
       <div class="form-group">
-        <label for="title">Name:</label>
+        <label for="imageFile">Image File:</label><br />
+        <input
+          type="file"
+          class="file-input"
+          id="imageFile"
+          (change)="onFileChange($event, 'image')"
+        />
+        <label for="imageFile" class="file-label">Choose Image File</label>
+      </div>
+      <div class="form-group">
+        <label for="title">Title:</label>
         <input
           type="text"
           id="title"
@@ -51,17 +61,13 @@
       <div class="form-group">
         <label>Genres:</label>
         <div class="checkbox-group">
-          <div>
-            <input type="checkbox" id="genre_romance" formControlName="genre_romance" />
-            <label for="genre_romance">Romance</label>
-          </div>
-          <div>
-            <input type="checkbox" id="genre_action" formControlName="genre_action" />
-            <label for="genre_action">Action</label>
-          </div>
-          <div>
-            <input type="checkbox" id="genre_horror" formControlName="genre_horror" />
-            <label for="genre_horror">Horror</label>
+          <div *ngFor="let genre of genresList">
+            <input
+              type="checkbox"
+              [value]="genre"
+              (change)="onCheckboxChange($event)"
+            />
+            <label>{{ genre }}</label>
           </div>
         </div>
       </div>
@@ -74,13 +80,22 @@
       </button>
     </form>
 
-    <div *ngIf="fileMetadata">
-      <h3>Metapodaci:</h3>
-      <p><strong>File name:</strong> {{ fileMetadata.name }}</p>
-      <p><strong>File type:</strong> {{ fileMetadata.type }}</p>
-      <p><strong>File size:</strong> {{ fileMetadata.size }} bytes</p>
-      <p><strong>Creation time:</strong> {{ fileMetadata.creationTime }}</p>
-      <p><strong>Last modified:</strong> {{ fileMetadata.lastModified }}</p>
+    <div *ngIf="fileMetadata.movie">
+      <h3>Movie File Metapodaci:</h3>
+      <p><strong>File name:</strong> {{ fileMetadata.movie?.name }}</p>
+      <p><strong>File type:</strong> {{ fileMetadata.movie?.type }}</p>
+      <p><strong>File size:</strong> {{ fileMetadata.movie?.size }} bytes</p>
+      <p><strong>Creation time:</strong> {{ fileMetadata.movie?.creationTime }}</p>
+      <p><strong>Last modified:</strong> {{ fileMetadata.movie?.lastModified }}</p>
+    </div>
+
+    <div *ngIf="fileMetadata.image">
+      <h3>Image File Metapodaci:</h3>
+      <p><strong>File name:</strong> {{ fileMetadata.image?.name }}</p>
+      <p><strong>File type:</strong> {{ fileMetadata.image?.type }}</p>
+      <p><strong>File size:</strong> {{ fileMetadata.image?.size }} bytes</p>
+      <p><strong>Creation time:</strong> {{ fileMetadata.image?.creationTime }}</p>
+      <p><strong>Last modified:</strong> {{ fileMetadata.image?.lastModified }}</p>
     </div>
   </div>
 </div>
