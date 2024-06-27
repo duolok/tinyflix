@@ -75,7 +75,7 @@ export class MovieUploadComponent {
         imageFilePath: `movies/${title}/${this.imageFile.name}`,
         movieType: this.movieFile.type,
         movieSize: String(this.movieFile.size),
-        movieLastModified: new Date(this.movieFile.lastModified), 
+        movieLastModified: new Date(Date.now()), 
         movieCreationTime: new Date(this.movieFile.lastModified), 
         imageType: this.imageFile.type,
         imageSize: String(this.imageFile.size),
