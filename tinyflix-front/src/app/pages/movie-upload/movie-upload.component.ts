@@ -40,8 +40,8 @@ export class MovieUploadComponent {
         name: file.name,
         type: file.type,
         size: file.size,
-        creationTime: file.lastModifiedDate,
-        lastModified: file.lastModifiedDate,
+        lastModified: new Date(file.lastModified), 
+        creationTime: new Date(file.lastModified), 
       };
       if (fileType === 'movie') {
         this.movieFile = file;
@@ -72,8 +72,17 @@ export class MovieUploadComponent {
         directors: this.uploadForm.get('directors')?.value,
         genres: this.uploadForm.get('genres')?.value,
         movieFilePath: `movies/${title}/${this.movieFile.name}`,
-        imageFilePath: `movies/${title}/${this.imageFile.name}`
+        imageFilePath: `movies/${title}/${this.imageFile.name}`,
+        movieType: this.movieFile.type,
+        movieSize: String(this.movieFile.size),
+        movieLastModified: new Date(this.movieFile.lastModified), 
+        movieCreationTime: new Date(this.movieFile.lastModified), 
+        imageType: this.imageFile.type,
+        imageSize: String(this.imageFile.size),
+        imageLastModified: new Date(this.imageFile.lastModified), 
+        imageCreationTime: new Date(this.imageFile.lastModified), 
       };
+
 
       this.movieUploadService.getPresignedUrls([this.movieFile.name, this.imageFile.name], title).subscribe((response: any) => {
         const presignedUrls = response.upload_urls;
