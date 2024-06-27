@@ -17,7 +17,7 @@ export class MovieUploadComponent {
   fileMetadata: any = {};
   movieFile: File | null = null;
   imageFile: File | null = null;
-  genresList: string[] = ['Romance', 'Action', 'Horror'];
+  genresList: string[] = ['Romance', 'Action', 'Horror', 'Western', 'Sci-Fi', 'Comedy', 'Advneture', 'Crime'];
 
   constructor(private fb: FormBuilder, private movieUploadService: UploadService) {
     this.uploadForm = this.fb.group({
