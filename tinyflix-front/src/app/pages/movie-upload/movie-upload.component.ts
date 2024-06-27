@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { NavBarComponent } from '../../components/nav-bar/nav-bar.component';
 import { UploadService } from '../../services/upload.service';
@@ -18,8 +19,11 @@ export class MovieUploadComponent {
   movieFile: File | null = null;
   imageFile: File | null = null;
   genresList: string[] = ['Romance', 'Action', 'Horror', 'Western', 'Sci-Fi', 'Comedy', 'Advneture', 'Crime'];
-
-  constructor(private fb: FormBuilder, private movieUploadService: UploadService) {
+  constructor(
+    private fb: FormBuilder,
+    private movieUploadService: UploadService,
+    private toastrService: ToastrService
+  ) {
     this.uploadForm = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
@@ -70,14 +74,10 @@ export class MovieUploadComponent {
         movieFilePath: `movies/${title}/${this.movieFile.name}`,
         imageFilePath: `movies/${title}/${this.imageFile.name}`
       };
-      console.log(metadata);
 
       this.movieUploadService.getPresignedUrls([this.movieFile.name, this.imageFile.name], title).subscribe((response: any) => {
         const presignedUrls = response.upload_urls;
-        console.log(presignedUrls);
-        console.log("WE GOOD HERE")
-        console.log(presignedUrls[1], "IMAGE PATH")
-        console.log(presignedUrls[0], "FILE PATH")
+        this.toastrService.success("Uploading a movie... Please wait.");
 
         if (this.movieFile) {
           this.movieUploadService.uploadFile(presignedUrls[0], this.movieFile).subscribe(() => {
@@ -85,19 +85,20 @@ export class MovieUploadComponent {
               this.movieUploadService.uploadFile(presignedUrls[1], this.imageFile).subscribe(() => {
                 this.movieUploadService.saveMetadata(metadata).subscribe(metaResponse => {
                   console.log('Upload successful', metaResponse);
+                  this.toastrService.success("Upload successful.");
                 }, metaError => {
-                    console.error('Metadata save failed', metaError);
+                  this.toastrService.error("Metadata save failed.");
                   });
               }, imageError => {
-                  console.error('Image upload failed', imageError);
+                  this.toastrService.error("Image upload failed.");
                 });
             }
           }, movieError => {
-              console.error('Movie upload failed', movieError);
+              this.toastrService.error("Movie file upload failed.");
             });
         }
       }, urlError => {
-          console.error('Failed to get presigned URLs', urlError);
+          this.toastrService.error("An error has occured. Try again later.");
         });
     }
   }
