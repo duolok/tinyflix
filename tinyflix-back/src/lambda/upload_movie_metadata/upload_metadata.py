@@ -25,11 +25,17 @@ def lambda_handler(event, context):
             'directors': body['directors'],  
             'genres': '|'.join(body['genres']) if isinstance(body['genres'], list) else body['genres'],
             'movieFilePath': body['movieFilePath'],
-            'imageFilePath': body['imageFilePath']
+            'imageFilePath': body['imageFilePath'],
+            'movieFileType': body['movieType'],
+            'movieFileSize': str(body['movieSize']),
+            'movieFileCreationTime': body['movieCreationTime'],
+            'movieFileLastModified': body['movieLastModified'],
+            'imageFileType': body['imageType'],
+            'imageFileSize': str(body['imageSize']),
+            'imageFileCreationTime': body['imageCreationTime'],
+            'imageFileLastModified': body['imageLastModified'],
         }
 
-        print("Metadata to be stored: ", metadata)
-        
         table.put_item(Item=metadata)
         return create_response(200, json.dumps({'message': 'Movie metadata uploaded successfully'}), cors=True)
     except json.JSONDecodeError as e:
