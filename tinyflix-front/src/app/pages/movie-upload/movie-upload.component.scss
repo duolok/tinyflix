@@ -1,47 +1,55 @@
 .container {
-  position: fixed;
   color: #fff;
-  margin-top: 5em;
-  top: 10em;
-  left: 3em;
+  margin-top: 10em;
+  margin-left: 8em;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 0 2em;
-  margin-left: 5rem;
+  overflow: auto;
+  max-height: 100vh;
 }
 
-.wrapper {
+.form-container {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2em;
+}
+
+.file-upload-column, .details-column {
+  flex: 1;
+  min-width: 300px;
 }
 
 h2 {
   margin-bottom: 20px;
-  font-size: 3em;
+  font-size: 2.5em;
   position: relative;
   font-family: 'Bayon', sans-serif;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   width: 100%;
   max-width: 30em;
 }
 
 .form-control {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin-top: 5px;
   background-color: #333;
   color: #fff;
-  border: none;
+  border: 2px solid #444;
   border-radius: 4px;
+  font-size: 1.1em;
 }
 
 .form-control:focus {
   outline: none;
-  box-shadow: 0 0 5px #006d77;
+  box-shadow: 0 0 5px #00a0a0;
+  border-color: #00a0a0;
 }
 
 textarea.form-control {
@@ -49,16 +57,17 @@ textarea.form-control {
 }
 
 .btn-primary {
-  background-color: #006d77;
-  border-color: #006d77;
+  background-color: #00a0a0;
+  border-color: #00a0a0;
   color: white;
-  padding: 0.8em;
+  padding: 1em;
   cursor: pointer;
   border-radius: 4px;
   width: 100%;
-  max-width: 30em;
+  max-width: 25em;
   text-align: center;
   height: 3em;
+  font-size: 1.2em;
 }
 
 .btn-primary[disabled] {
@@ -67,18 +76,32 @@ textarea.form-control {
   cursor: not-allowed;
 }
 
+.btn-primary:hover:not([disabled]) {
+  background-color: #008080;
+}
+
 h3 {
-  margin-top: 30px;
+  margin-top: 20px;
   font-size: 1.5em;
 }
 
 p {
   margin: 5px 0;
-  font-size: 1em;
+  font-size: 1.1em;
 }
 
 .file-input {
   display: none;
+}
+
+label {
+  font-family: rubik-bold;
+  font-size: 3em;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px #000;
+  font-size: 4em;
+  padding-bottom: 0.8em;
 }
 
 .file-label {
@@ -88,19 +111,19 @@ p {
   gap: 1em;
   border-radius: 4px;
   font-family: 'Rubik', sans-serif;
-  background-color: #006d77;
+  background-color: #00a0a0;
   color: white;
-  padding: 0.8em;
+  padding: 1em;
   width: 100%;
-  max-width: 30em;
-  cursor: pointer;
+  max-width: 30em; cursor: pointer;
   transition: background-color 0.3s ease;
   height: 3em;
   text-align: center;
+  font-size: 1.2em;
 }
 
 .file-label:hover {
-  background-color: #005f68;
+  background-color: #008080;
 }
 
 label {
@@ -109,41 +132,39 @@ label {
 }
 
 .checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
   width: 100%;
   max-width: 30em;
 }
 
 .checkbox-group label {
-  display: flex;
   align-items: center;
-  font-size: 1em;
+  font-size: 1.1em;
   font-family: 'Rubik', sans-serif;
   margin: 0;
   cursor: pointer;
-  position: relative;
-  padding-left: 2em;
 }
 
 .checkbox-group input[type="checkbox"] {
-  position: absolute;
+  margin-right: 10px;
   cursor: pointer;
 }
 
 .checkbox-group .checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: inline-block;
   height: 1.5em;
   width: 1.5em;
+  background-color: #333;
   border-radius: 4px;
+  margin-right: 10px;
+  cursor: pointer;
 }
 
-.checkbox-group input[type="checkbox"]:checked ~ .checkmark {
-  background-color: #006d77;
-  box-shadow: 0 0 5px #006d77;
+.checkbox-group input[type="checkbox"]:checked + .checkmark {
+  background-color: #00a0a0;
+  box-shadow: 0 0 5px #00a0a0;
 }
 
 .checkbox-group .checkmark:after {
@@ -159,8 +180,7 @@ label {
   transform: rotate(45deg);
 }
 
-.checkbox-group input[type="checkbox"]:checked ~ .checkmark:after {
+.checkbox-group input[type="checkbox"]:checked + .checkmark:after {
   display: block;
 }
-
 
