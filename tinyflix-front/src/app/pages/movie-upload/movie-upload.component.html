@@ -1,102 +1,109 @@
-<div class="h-screen backgroundImagePopcorn">
+<div class="min-h-full backgroundImagePopcorn">
   <app-nav-bar></app-nav-bar>
-  <div class="container">
-    <h2>New Movie</h2>
-    <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="movieFile">Movie File:</label><br />
-        <input
-          type="file"
-          class="file-input"
-          id="movieFile"
-          (change)="onFileChange($event, 'movie')"
-        />
-        <label for="movieFile" class="file-label">Choose Movie File</label>
-      </div>
-      <div class="form-group">
-        <label for="imageFile">Image File:</label><br />
-        <input
-          type="file"
-          class="file-input"
-          id="imageFile"
-          (change)="onFileChange($event, 'image')"
-        />
-        <label for="imageFile" class="file-label">Choose Image File</label>
-      </div>
-      <div class="form-group">
-        <label for="title">Title:</label>
-        <input
-          type="text"
-          id="title"
-          formControlName="title"
-          class="form-control"
-        />
-      </div>
-      <div class="form-group">
-        <label for="description">Description:</label>
-        <textarea
-          id="description"
-          formControlName="description"
-          class="form-control"
-        ></textarea>
-      </div>
-      <div class="form-group">
-        <label for="actors">Actors:</label>
-        <input
-          type="text"
-          id="actors"
-          formControlName="actors"
-          class="form-control"
-        />
-      </div>
-      <div class="form-group">
-        <label for="directors">Directors:</label>
-        <input
-          type="text"
-          id="directors"
-          formControlName="directors"
-          class="form-control"
-        />
-      </div>
-      <div class="form-group">
-        <label>Genres:</label>
-        <div class="checkbox-group">
-          <div *ngFor="let genre of genresList">
+  <div class="wrapper">
+    <div class="container">
+      <h2>New Movie</h2>
+      <div class="form-container">
+        <div class="file-upload-column">
+          <div class="form-group">
+            <label for="movieFile">Movie File</label><br />
             <input
-              type="checkbox"
-              [value]="genre"
-              (change)="onCheckboxChange($event)"
+              type="file"
+              class="file-input"
+              id="movieFile"
+              (change)="onFileChange($event, 'movie')"
             />
-            <label>{{ genre }}</label>
+            <label for="movieFile" class="file-label">Choose Movie File</label>
+          </div>
+          <div class="form-group">
+            <label for="imageFile">Image File</label><br />
+            <input
+              type="file"
+              class="file-input"
+              id="imageFile"
+              (change)="onFileChange($event, 'image')"
+            />
+            <label for="imageFile" class="file-label">Choose Image File</label>
+            <div class="metadata-div">
+              <div>
+                <h3>Movie File Metadata:</h3>
+                <p><strong>File name:</strong> {{ fileMetadata.movie?.name }}</p>
+                <p><strong>File type:</strong> {{ fileMetadata.movie?.type }}</p>
+                <p><strong>File size:</strong> {{ fileMetadata.movie?.size }} bytes</p>
+                <p><strong>Creation time:</strong> {{ fileMetadata.movie?.creationTime }}</p>
+                <p><strong>Last modified:</strong> {{ fileMetadata.movie?.lastModified }}</p>
+              </div>
+              <div>
+                <h3>Image File Metadata</h3>
+                <p><strong>File name:</strong> {{ fileMetadata.image?.name }}</p>
+                <p><strong>File type:</strong> {{ fileMetadata.image?.type }}</p>
+                <p><strong>File size:</strong> {{ fileMetadata.image?.size }} bytes</p>
+                <p><strong>Creation time:</strong> {{ fileMetadata.image?.creationTime }}</p>
+                <p><strong>Last modified:</strong> {{ fileMetadata.image?.lastModified }}</p>
+              </div>
+            </div>
           </div>
         </div>
+        <div class="details-column">
+          <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="title">Title</label>
+              <input
+                type="text"
+                id="title"
+                formControlName="title"
+                class="form-control"
+              />
+            </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea
+                id="description"
+                formControlName="description"
+                class="form-control"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="actors">Actors</label>
+              <input
+                type="text"
+                id="actors"
+                formControlName="actors"
+                class="form-control"
+              />
+            </div>
+            <div class="form-group">
+              <label for="directors">Directors</label>
+              <input
+                type="text"
+                id="directors"
+                formControlName="directors"
+                class="form-control"
+              />
+            </div>
+            <div class="form-group">
+              <label>Genres:</label>
+              <div class="checkbox-group">
+                <div *ngFor="let genre of genresList">
+                  <input
+                    type="checkbox"
+                    [value]="genre"
+                    (change)="onCheckboxChange($event)"
+                  />
+                  <label>{{ genre }}</label>
+                </div>
+              </div>
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="uploadForm.invalid"
+            >
+              Upload
+            </button>
+          </form>
+        </div>
       </div>
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="uploadForm.invalid"
-      >
-        Upload
-      </button>
-    </form>
-
-    <div *ngIf="fileMetadata.movie">
-      <h3>Movie File Metapodaci:</h3>
-      <p><strong>File name:</strong> {{ fileMetadata.movie?.name }}</p>
-      <p><strong>File type:</strong> {{ fileMetadata.movie?.type }}</p>
-      <p><strong>File size:</strong> {{ fileMetadata.movie?.size }} bytes</p>
-      <p><strong>Creation time:</strong> {{ fileMetadata.movie?.creationTime }}</p>
-      <p><strong>Last modified:</strong> {{ fileMetadata.movie?.lastModified }}</p>
-    </div>
-
-    <div *ngIf="fileMetadata.image">
-      <h3>Image File Metapodaci:</h3>
-      <p><strong>File name:</strong> {{ fileMetadata.image?.name }}</p>
-      <p><strong>File type:</strong> {{ fileMetadata.image?.type }}</p>
-      <p><strong>File size:</strong> {{ fileMetadata.image?.size }} bytes</p>
-      <p><strong>Creation time:</strong> {{ fileMetadata.image?.creationTime }}</p>
-      <p><strong>Last modified:</strong> {{ fileMetadata.image?.lastModified }}</p>
     </div>
   </div>
 </div>
-
