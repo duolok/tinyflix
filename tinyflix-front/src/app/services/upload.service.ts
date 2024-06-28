@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { cognito } from '../../environments/environment'; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class UploadService {
-  private apiUrl = 'https://pk2brd8fo7.execute-api.eu-central-1.amazonaws.com/dev';
+  private apiUrl = cognito.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -19,8 +20,6 @@ export class UploadService {
   }
 
   saveMetadata(metadata: any): Observable<any> {
-    console.log("METADATA ALO");
-    console.log(metadata);
     return this.http.post(`${this.apiUrl}/movies/upload-movie-metadata`, metadata);
   }
 }
