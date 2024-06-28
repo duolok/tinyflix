@@ -1,13 +1,15 @@
 <div [routerLink]="['/movie', movie.name]" class="movie-card">
   <div class="gradient">
     <div class="gradient-overlay"></div>
-    <img mat-card-image [src]="movie.imageUrl" alt="movie image">
+    <img [src]="movie.imageFilePath" alt="movie image" class="movie-image" (error)="onImageError($event)" (load)="onImageLoad($event)">
   </div>
   <div class="wrapper">
     <h4 class="card-title">{{ movie.title }}</h4>
     <div class="mini-info">
-      <span class="release-year">{{ movie.releaseDate }}</span>
-      <span class="duration">{{ movie.duration }}</span>
+      <p>{{ movie.description }}</p>
+      <p>Actors: {{ movie.actors }}</p>
+      <p>Directors: {{ movie.directors }}</p>
+      <p>Genres: {{ movie.genres }}</p>
     </div>
     <div class="play-icon">▶</div>
   </div>
