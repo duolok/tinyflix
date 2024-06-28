@@ -24,9 +24,7 @@ export class MovieService {
   getMovies(): Observable<any[]> {
     return this.httpClient.get<{ body: string }>(`${this.apiUrl}/movies/get-all-movies`).pipe(
       map(response => {
-        console.log('Raw response from API:', response);
         const parsedBody = JSON.parse(response.body);
-        console.log('Parsed body:', parsedBody);
         const movies = parsedBody.data;
         return movies.map((movie: any) => ({
           ...movie,
