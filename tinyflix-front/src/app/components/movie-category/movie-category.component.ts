@@ -19,7 +19,9 @@ export class MovieCategoryComponent implements OnInit {
   ngOnInit(): void {
     this.movieService.getMovies().subscribe(movies => {
       this.movies = movies;
+      console.log(this.movies)
     });
   }
+
 }
 
