@@ -28,7 +28,8 @@ export class MovieService {
         const movies = parsedBody.data;
         return movies.map((movie: any) => ({
           ...movie,
-          imageFilePath: `${this.s3BucketUrl}/${movie.imageFilePath}`
+          imageFilePath: `${this.s3BucketUrl}/${movie.imageFilePath}`,
+          movieFilePath: `${this.s3BucketUrl}/${movie.movieFilePath}`
         }));
       })
     );
