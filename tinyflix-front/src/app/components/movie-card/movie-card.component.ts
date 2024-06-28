@@ -15,6 +15,12 @@ export class MovieCardComponent {
 
   constructor(private router: Router) {}
 
+  onImageError(event: Event) {
+  }
+
+  onImageLoad(event: Event) {
+  }
+
   navigateToMovie(): void {
     this.router.navigate(['/movies', this.movie.name]);
   }
