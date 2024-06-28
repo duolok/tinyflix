@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { cognito } from '../../environments/environment'; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class MovieService {
-  constructor() {}
+  private apiUrl = cognito.apiUrl;
+
+  constructor(
+    private httpClient: HttpClient,
+  ) {}
 
   getMovieDetailsByName(name: string): Observable<any> {
     const movies = this.getMoviesList();
