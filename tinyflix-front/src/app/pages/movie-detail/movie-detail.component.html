@@ -3,7 +3,7 @@
   <div class="movie-detail" *ngIf="movie">
     <div class="movie-content">
       <video controls #videoPlayer>
-        <source [src]="movie.fileUrl" type="video/mp4" />
+        <source [src]="movie.movieFilePath" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       <div class="actions">
@@ -23,9 +23,9 @@
       </div>
       <div class="details">
         <h2>Details</h2>
-        <p><strong>Director:</strong> {{ movie.director }}</p>
-        <p><strong>Cast:</strong> {{ movie.cast.join(", ") }}</p>
-        <p><strong>Release Date:</strong> {{ movie.releaseDate }}</p>
+        <p><strong>Director:</strong> {{ movie.directors }}</p>
+        <p><strong>Cast:</strong> {{ movie.actors }}</p>
+        <p><strong>Genres:</strong> {{ movie.genres }}</p>
       </div>
     </div>
   </div>
