@@ -41,56 +41,44 @@ $transition-time: 0.3s;
       margin-top: 1em;
 
       button {
-        min-height: 53px;
-        min-width: 166px;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-align: center;
-        -ms-flex-align: center;
-        align-items: center;
-        -ms-flex-pack: distribute;
-        justify-content: space-around;
-        position: relative;
+        padding: 15px 30px;
+        width: 11em;
+        border: 2px solid #2c2c2c;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        font-size: 1.2rem;
         cursor: pointer;
-        background: -webkit-gradient(linear, left top, right top, color-stop(-12.74%, rgba(110, 239, 255, .5)), color-stop(56.76%, rgba(106, 224, 255, .271)));
-        background: linear-gradient(90deg, rgba(110, 239, 255, .5) -12.74%, rgba(106, 224, 255, .271) 56.76%);
-        border: 2px solid #006d77;
-        color: #FFFFFF;
-        font-size: 18px;
-        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.4s ease;
+        outline: none;
+        position: relative;
+        overflow: hidden;
+        font-weight: bold;
       }
 
-      button:before {
+      button::after {
         content: "";
-        width: 4px;
-        height: 28px;
-        background: #19173b;
-        border: 2px solid #006d77;
-        -webkit-transform: rotate(-45deg);
-        -ms-transform: rotate(-45deg);
-        transform: rotate(-45deg);
         position: absolute;
-        border-top: 0;
-        border-left: 0;
-        border-bottom: 0;
-        bottom: -7px;
-        left: 4px;
-        border-bottom-left-radius: 10px;
-        border-top-left-radius: 10px;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.25) 0%,
+        rgba(255, 255, 255, 0) 70%
+        );
+        transform: scale(0);
+        transition: transform 0.5s ease;
       }
 
-      button:after {
-        content: "";
-        position: absolute;
-        left: -2px;
-        bottom: -2px;
-        border-top: 15px solid transparent;
-        border-left: 15px solid #fffcf7;
+      button:hover::after {
+        transform: scale(4);
       }
 
       button:hover {
-        background-color: darken($primary-color, $hover-darken);
+        border-color: #666666;
+        background: #006d77;
       }
     }
   }
