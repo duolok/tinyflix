@@ -41,74 +41,113 @@ $transition-time: 0.3s;
       margin-top: 1em;
 
       button {
-        background-color: $primary-color;
-        border: none;
-        padding: 0.7em 1.5em;
-        font-size: 1.2em;
-        border-radius: 5px;
-        color: $text-color;
+        min-height: 53px;
+        min-width: 166px;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: distribute;
+        justify-content: space-around;
+        position: relative;
         cursor: pointer;
-        transition: background-color $transition-time ease;
-
-        &:hover {
-          background-color: darken($primary-color, $hover-darken);
-        }
-      }
-    }
-  }
-
-  .movie-info {
-    width: 45%;
-    padding: 2em;
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(20, 20, 20, 0.8);
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-
-    h1 {
-      text-align: center;
-      font-family: bayon;
-      letter-spacing: 1px;
-      font-weight: regular;
-      margin: 0;
-      font-size: 3.5em;
-      color: white;
-      display: inline-block;
-      margin-left: 2em;
-      margin-right: 2em;
-      margin-top: 0.5em;
-      text-shadow:
-        0 0 10px #83c5be,
-        0 0 20px #006d77;
-      z-index: 9999;
-    }
-
-    .description,
-    .details {
-      margin-bottom: 1.5em;
-      font-size: 1.2em;
-      width: 100%;
-
-      h2 {
-        font-size: 2.5em;
-
-        color: $text-color;
-        font-family: bayon;
-        margin-bottom: 0.5em;
-        border-bottom: 2px solid $primary-color;
-        padding-bottom: 0.2em;
+        background: -webkit-gradient(linear, left top, right top, color-stop(-12.74%, rgba(110, 239, 255, .5)), color-stop(56.76%, rgba(106, 224, 255, .271)));
+        background: linear-gradient(90deg, rgba(110, 239, 255, .5) -12.74%, rgba(106, 224, 255, .271) 56.76%);
+        border: 2px solid #006d77;
+        color: #FFFFFF;
+        font-size: 18px;
+        font-weight: 600;
       }
 
-      p {
-        font-size: 1.5em;
-        margin: 0.5em 0;
-        color: $text-color;
+      button:before {
+        content: "";
+        width: 4px;
+        height: 28px;
+        background: #19173b;
+        border: 2px solid #006d77;
+        -webkit-transform: rotate(-45deg);
+        -ms-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+        position: absolute;
+        border-top: 0;
+        border-left: 0;
+        border-bottom: 0;
+        bottom: -7px;
+        left: 4px;
+        border-bottom-left-radius: 10px;
+        border-top-left-radius: 10px;
+      }
 
-        strong {
-          color: $text-color;
-        }
+      button:after {
+        content: "";
+        position: absolute;
+        left: -2px;
+        bottom: -2px;
+        border-top: 15px solid transparent;
+        border-left: 15px solid #fffcf7;
+      }
+
+      button:hover {
+        background-color: darken($primary-color, $hover-darken);
       }
     }
   }
 }
+
+.movie-info {
+  width: 45%;
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(20, 20, 20, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+
+  h1 {
+    text-align: center;
+    font-family: bayon;
+    letter-spacing: 1px;
+    font-weight: regular;
+    margin: 0;
+    font-size: 3.5em;
+    color: white;
+    display: inline-block;
+    margin-left: 2em;
+    margin-right: 2em;
+    margin-top: 0.5em;
+    text-shadow:
+    0 0 10px #83c5be,
+    0 0 20px #006d77;
+    z-index: 9999;
+  }
+
+  .description,
+  .details {
+    margin-bottom: 1.5em;
+    font-size: 1.2em;
+    width: 100%;
+
+    h2 {
+      font-size: 2.5em;
+
+      color: $text-color;
+      font-family: bayon;
+      margin-bottom: 0.5em;
+      border-bottom: 2px solid $primary-color;
+      padding-bottom: 0.2em;
+    }
+
+    p {
+      font-size: 1.5em;
+      margin: 0.5em 0;
+      color: $text-color;
+
+      strong {
+        color: $text-color;
+      }
+    }
+  }
+}
+
