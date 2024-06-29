@@ -42,10 +42,31 @@ export class MovieDetailComponent implements OnInit {
   }
 
   downloadMovie(): void {
-    const link = document.createElement("a");
-    link.href = this.movie.fileUrl;
-    link.download = this.movie.title;
-    link.click();
+    if (this.movie && this.movie.movieFilePath) {
+      this.movieService.downloadMovie(this.movie.movieFilePath).subscribe(
+        async presignedUrl => {
+          try {
+            const response = await fetch(presignedUrl);
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            const blob = await response.blob();
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', `${this.movie.name}.mp4`); 
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode?.removeChild(link);
+            window.URL.revokeObjectURL(link.href); 
+          } catch (error) {
+            console.error('Error downloading the movie', error);
+          }
+        },
+        error => {
+          console.error('Error getting presigned URL', error);
+        }
+      );
+    }
   }
 
   addBookmark(): void { }
