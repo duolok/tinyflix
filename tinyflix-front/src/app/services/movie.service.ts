@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { cognito } from '../../environments/environment'; 
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class MovieService {
 
   constructor(
     private httpClient: HttpClient,
+    private authService: AuthService,
   ) {}
 
   getMovieDetailsByName(name: string): Observable<any> {
@@ -33,6 +35,29 @@ export class MovieService {
         }));
       })
     );
+  }
+
+  downloadMovie(filePath: string): Observable<string> {
+    const fileKey = filePath.substring(filePath.indexOf('movies/'));
+    const params = new HttpParams().set('file_key', fileKey);
+    const headers = this.createAuthHeaders();
+    return this.httpClient.get<{ presigned_url: string }>(`${this.apiUrl}/movies/download-movie-file`, { params, headers }).pipe(
+      map(response => response.presigned_url),
+      catchError(error => {
+        console.error('Error downloading movie', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  private createAuthHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    if (!token) {
+      throw new Error('Authentication token is missing');
+    }
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
   }
 
   private getMoviesList(): any[] {
