@@ -1,0 +1,10 @@
+<div class="confirmation-dialog-overlay" NgIf="show">
+  <div class="confirmation-dialog">
+    <h1>Are you sure?</h1>
+    <p>Movie will be permanently deleted.</p>
+    <div class="buttons-container">
+      <button mat-button (click)="confirmDelete(true)">Yes</button>
+      <button mat-button (click)="confirmDelete(false)">No</button>
+    </div>
+  </div>
+</div>
