@@ -9,11 +9,9 @@ body {
   overflow-x: hidden;
   background-color: #1e1e1e;
 }
-html,
-body {
-  height: 100%;
-  margin: 0;
-}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 @font-face {
   font-family: "bayon";
@@ -76,6 +74,17 @@ body {
   position: relative;
   z-index: 2;
 }
+
 .toast-success {
   background-color: #007d77;
 }
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.backdropBackground {
+  backdrop-filter: blur(10px);
+}
+
+
