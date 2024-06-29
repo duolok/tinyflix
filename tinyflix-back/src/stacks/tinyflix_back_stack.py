@@ -157,6 +157,15 @@ class TinyflixBackStack(Stack):
         )
 
         create_lambda(
+            "getMovie",
+            "get_movie.lambda_handler",
+            "src/lambda/get_movie",
+            "GET",
+            [util_layer, service_layer, model_layer]
+        )
+
+
+        create_lambda(
             "deleteMovieMetadata",
             "delete_metadata.lambda_handler",
             "src/lambda/delete_movie_metadata",
