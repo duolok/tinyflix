@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
+import { ToastrService } from 'ngx-toastr';
 import { NavBarComponent } from "../../components/nav-bar/nav-bar.component";
 import { MovieService } from "../../services/movie.service";
 
@@ -19,7 +20,8 @@ export class MovieDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private movieService: MovieService
+    private movieService: MovieService,
+    private toastrService: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -43,6 +45,7 @@ export class MovieDetailComponent implements OnInit {
 
   downloadMovie(): void {
     if (this.movie && this.movie.movieFilePath) {
+      this.toastrService.success("Downloading a movie... Please wait.");
       this.movieService.downloadMovie(this.movie.movieFilePath).subscribe(
         async presignedUrl => {
           try {
