@@ -9,10 +9,9 @@
       <div class="actions">
         <button (click)="playMovie()">{{ isPlaying ? "Pause" : "Play" }}</button>
         <button (click)="downloadMovie()">Download</button>
-        <button (click)="addBookmark()">Add Bookmark</button>
-        <div *ngIf="role === 'admin'">
-          <button (click)="updateMovie()">Update Movie</button>
-        </div>
+        <button (click)="addBookmark()">Bookmark</button>
+        <button (click)="updateMovie()">Update</button>
+        <button (click)="updateMovie()">Delete</button>
       </div>
     </div>
     <div class="movie-info">
