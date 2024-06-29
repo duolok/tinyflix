@@ -1,5 +1,5 @@
 <app-nav-bar></app-nav-bar>
-<div class="movie-detail-container backgroundImageParticles">
+<div class="movie-detail-container backgroundImageParticles" [class.blur]="showConfirmDialog">
   <div class="movie-detail" *ngIf="movie">
     <div class="movie-content">
       <video controls #videoPlayer>
@@ -11,7 +11,7 @@
         <button (click)="downloadMovie()">Download</button>
         <button (click)="addBookmark()">Bookmark</button>
         <button (click)="updateMovie()">Update</button>
-        <button (click)="updateMovie()">Delete</button>
+        <button (click)="$event.preventDefault();deleteMovie()">Delete</button>
       </div>
     </div>
     <div class="movie-info">
