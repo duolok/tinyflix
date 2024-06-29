@@ -156,6 +156,22 @@ class TinyflixBackStack(Stack):
             [util_layer, service_layer, model_layer]
         )
 
+        create_lambda(
+            "deleteMovieMetadata",
+            "delete_metadata.lambda_handler",
+            "src/lambda/delete_movie_metadata",
+            "DELETE",
+            [util_layer, service_layer, model_layer]
+        )
+
+        create_lambda(
+            "deleteMovieFile",
+            "delete_file.lambda_handler",
+            "src/lambda/delete_movie_file",
+            "DELETE",
+            [util_layer, service_layer, model_layer]
+        )
+
         # create_lambda(
         #     "uploadMovieFile",
         #     "upload_movie_file.lambda_handler",
