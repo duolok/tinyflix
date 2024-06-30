@@ -54,6 +54,9 @@ export class MovieService {
     );
   }
 
+  updateMovie(movie: any): Observable<any> {
+    return this.httpClient.patch(`${this.apiUrl}/update-movie/${movie.name}`, movie);
+  }
 
   deleteMovie(movieName: string, movieFilePath: string): Observable<any> {
     const headers = this.createAuthHeaders();
