@@ -5,9 +5,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0 2em;
+  padding: 0em 3em;
+  padding-bottom: 2em;
   overflow: auto;
-  max-height: 100vh;
 }
 
 .form-container {
@@ -39,7 +39,7 @@ h2 {
   width: 100%;
   padding: 12px;
   margin-top: 5px;
-  background-color: #333;
+  background-color: #424242;
   color: #fff;
   border: 2px solid #444;
   border-radius: 4px;
@@ -95,12 +95,11 @@ p {
 }
 
 label {
-  font-family: rubik-bold;
-  font-size: 3em;
+  font-family: 'Rubik', sans-serif;
+  font-size: 1.2em;
   font-weight: bold;
   color: white;
   text-shadow: 0 0 10px #000;
-  font-size: 4em;
   padding-bottom: 0.8em;
 }
 
@@ -110,12 +109,12 @@ label {
   justify-content: center;
   gap: 1em;
   border-radius: 4px;
-  font-family: 'Rubik', sans-serif;
   background-color: #00a0a0;
   color: white;
   padding: 1em;
   width: 100%;
-  max-width: 30em; cursor: pointer;
+  max-width: 30em; 
+  cursor: pointer;
   transition: background-color 0.3s ease;
   height: 3em;
   text-align: center;
@@ -124,11 +123,6 @@ label {
 
 .file-label:hover {
   background-color: #008080;
-}
-
-label {
-  font-family: 'Rubik', sans-serif;
-  font-size: 1.2em;
 }
 
 .checkbox-group {
@@ -150,13 +144,14 @@ label {
 .checkbox-group input[type="checkbox"] {
   margin-right: 10px;
   cursor: pointer;
+  transform: scale(1.5);
 }
 
 .checkbox-group .checkmark {
   display: inline-block;
   height: 1.5em;
   width: 1.5em;
-  background-color: #333;
+  background-color: #424242;
   border-radius: 4px;
   margin-right: 10px;
   cursor: pointer;
@@ -182,5 +177,90 @@ label {
 
 .checkbox-group input[type="checkbox"]:checked + .checkmark:after {
   display: block;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-container input {
+  width: 100%;
+  padding-right: 1em; 
+}
+
+.datepicker-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px; 
+  transform: translateY(-50%);
+  pointer-events: all;
+}
+
+.datepicker-toggle .mat-icon-button {
+  pointer-events: all;
+  z-index: 1;
+}
+
+.chip-list {
+  width: 100%;
+  max-width: 30em;
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  color: white;
+  border-radius: 4px;
+}
+
+.mat-chip-row {
+  display: flex;
+  align-items: center;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  background-color: #424242; 
+  font-size: 1.1em;
+  font-family: 'Rubik', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.mat-chip-row:hover {
+  background-color: #555; 
+}
+
+.mat-chip-row mat-icon {
+  margin-left: 0.5em;
+  font-size: 1.2em;
+}
+
+.mat-chip-input-token-end {
+  display: inline-flex;
+  flex-wrap: wrap;
+  background-color: #424242; 
+  gap: 0.5em;
+  width: 100%;
+}
+
+input[matChipInputFor] {
+  flex: 1;
+  padding: 0.5em 1em;
+  background-color: #424242; 
+  color: #fff;
+  border: 2px solid #444;
+  border-radius: 4px;
+  font-size: 1.1em;
+  font-family: 'Rubik', sans-serif;
+}
+
+input[matChipInputFor]::placeholder {
+  color: #aaa;
+}
+
+input[matChipInputFor]:focus {
+  outline: none;
+  box-shadow: 0 0 5px #00a0a0;
+  border-color: #00a0a0;
 }
 
