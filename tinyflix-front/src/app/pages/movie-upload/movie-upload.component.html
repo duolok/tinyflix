@@ -56,6 +56,31 @@
               />
             </div>
             <div class="form-group">
+              <label for="duration">Duration</label>
+              <input
+                type="text"
+                id="duration"
+                formControlName="duration"
+                class="form-control"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="releaseDate">Release Date</label>
+              <div class="input-container">
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  id="releaseDate"
+                  formControlName="releaseDate"
+                  class="form-control"
+                />
+                <mat-datepicker-toggle matSuffix [for]="picker" class="datepicker-toggle"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </div>
+            </div>
+
+            <div class="form-group">
               <label for="description">Description</label>
               <textarea
                 id="description"
@@ -63,43 +88,77 @@
                 class="form-control"
               ></textarea>
             </div>
-            <div class="form-group">
-              <label for="actors">Actors</label>
-              <input
-                type="text"
-                id="actors"
-                formControlName="actors"
-                class="form-control"
-              />
+
+            <div>
+              <div class="form-group">
+                <label for="actors">Actors</label>
+                <mat-form-field class="chip-list">
+                  <mat-chip-grid class="funny-row" #actorsChipList>
+                    <mat-chip-row
+                        *ngFor="let actor of actors"
+                        [removable]="removable"
+                        (removed)="removeActor(actor)">
+                      {{ actor }}
+                      <button matChipRemove *ngIf="removable">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip-row>
+                    <input
+                        placeholder="New actor..."
+                        [formControl]="actorCtrl"
+                        [matChipInputFor]="actorsChipList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        [matChipInputAddOnBlur]="addOnBlur"
+                        (matChipInputTokenEnd)="addActor($event)">
+                  </mat-chip-grid>
+                </mat-form-field>
+              </div>
+
+              <div class="form-group">
+                <label for="directors">Directors</label>
+                <mat-form-field class="chip-list">
+                  <mat-chip-grid class="funny-row" #directorsChipList>
+                    <mat-chip-row
+                        *ngFor="let director of directors"
+                        [removable]="removable"
+                        (removed)="removeDirector(director)">
+                      {{ director }}
+                      <button matChipRemove *ngIf="removable">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip-row>
+                    <input
+                        placeholder="New director..."
+                        [formControl]="directorCtrl"
+                        [matChipInputFor]="directorsChipList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        [matChipInputAddOnBlur]="addOnBlur"
+                        (matChipInputTokenEnd)="addDirector($event)">
+                  </mat-chip-grid>
+                </mat-form-field>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="directors">Directors</label>
-              <input
-                type="text"
-                id="directors"
-                formControlName="directors"
-                class="form-control"
-              />
-            </div>
+
             <div class="form-group">
               <label>Genres:</label>
               <div class="checkbox-group">
                 <div *ngFor="let genre of genresList">
                   <input
-                    type="checkbox"
-                    [value]="genre"
-                    (change)="onCheckboxChange($event)"
-                  />
+                      type="checkbox"
+                      [value]="genre"
+                      (change)="onCheckboxChange($event)"
+                      />
                   <label>{{ genre }}</label>
                 </div>
               </div>
             </div>
+
             <button
-              type="submit"
-              class="btn btn-primary"
-              [disabled]="uploadForm.invalid"
-            >
-              Upload
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="uploadForm.invalid"
+                >
+                Upload
             </button>
           </form>
         </div>
@@ -107,3 +166,4 @@
     </div>
   </div>
 </div>
+
