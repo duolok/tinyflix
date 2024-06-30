@@ -1,0 +1,266 @@
+.container {
+  color: #fff;
+  margin-top: 10em;
+  margin-left: 8em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0em 3em;
+  padding-bottom: 2em;
+  overflow: auto;
+}
+
+.form-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2em;
+}
+
+.file-upload-column, .details-column {
+  flex: 1;
+  min-width: 300px;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 2.5em;
+  position: relative;
+  font-family: 'Bayon', sans-serif;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 30em;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  background-color: #424242;
+  color: #fff;
+  border: 2px solid #444;
+  border-radius: 4px;
+  font-size: 1.1em;
+}
+
+.form-control:focus {
+  outline: none;
+  box-shadow: 0 0 5px #00a0a0;
+  border-color: #00a0a0;
+}
+
+textarea.form-control {
+  resize: none;
+}
+
+.btn-primary {
+  background-color: #00a0a0;
+  border-color: #00a0a0;
+  color: white;
+  padding: 1em;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 25em;
+  text-align: center;
+  height: 3em;
+  font-size: 1.2em;
+}
+
+.btn-primary[disabled] {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.btn-primary:hover:not([disabled]) {
+  background-color: #008080;
+}
+
+h3 {
+  margin-top: 20px;
+  font-size: 1.5em;
+}
+
+p {
+  margin: 5px 0;
+  font-size: 1.1em;
+}
+
+.file-input {
+  display: none;
+}
+
+label {
+  font-family: 'Rubik', sans-serif;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px #000;
+  padding-bottom: 0.8em;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  border-radius: 4px;
+  background-color: #00a0a0;
+  color: white;
+  padding: 1em;
+  width: 100%;
+  max-width: 30em; 
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  height: 3em;
+  text-align: center;
+  font-size: 1.2em;
+}
+
+.file-label:hover {
+  background-color: #008080;
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
+  width: 100%;
+  max-width: 30em;
+}
+
+.checkbox-group label {
+  align-items: center;
+  font-size: 1.1em;
+  font-family: 'Rubik', sans-serif;
+  margin: 0;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: 10px;
+  cursor: pointer;
+  transform: scale(1.5);
+}
+
+.checkbox-group .checkmark {
+  display: inline-block;
+  height: 1.5em;
+  width: 1.5em;
+  background-color: #424242;
+  border-radius: 4px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"]:checked + .checkmark {
+  background-color: #00a0a0;
+  box-shadow: 0 0 5px #00a0a0;
+}
+
+.checkbox-group .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 0.5em;
+  top: 0.2em;
+  width: 0.3em;
+  height: 0.6em;
+  border: solid white;
+  border-width: 0 0.2em 0.2em 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-group input[type="checkbox"]:checked + .checkmark:after {
+  display: block;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-container input {
+  width: 100%;
+  padding-right: 1em; 
+}
+
+.datepicker-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px; 
+  transform: translateY(-50%);
+  pointer-events: all;
+}
+
+.datepicker-toggle .mat-icon-button {
+  pointer-events: all;
+  z-index: 1;
+}
+
+.chip-list {
+  width: 100%;
+  max-width: 30em;
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  color: white;
+  border-radius: 4px;
+}
+
+.mat-chip-row {
+  display: flex;
+  align-items: center;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  background-color: #424242; 
+  font-size: 1.1em;
+  font-family: 'Rubik', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.mat-chip-row:hover {
+  background-color: #555; 
+}
+
+.mat-chip-row mat-icon {
+  margin-left: 0.5em;
+  font-size: 1.2em;
+}
+
+.mat-chip-input-token-end {
+  display: inline-flex;
+  flex-wrap: wrap;
+  background-color: #424242; 
+  gap: 0.5em;
+  width: 100%;
+}
+
+input[matChipInputFor] {
+  flex: 1;
+  padding: 0.5em 1em;
+  background-color: #424242; 
+  color: #fff;
+  border: 2px solid #444;
+  border-radius: 4px;
+  font-size: 1.1em;
+  font-family: 'Rubik', sans-serif;
+}
+
+input[matChipInputFor]::placeholder {
+  color: #aaa;
+}
+
+input[matChipInputFor]:focus {
+  outline: none;
+  box-shadow: 0 0 5px #00a0a0;
+  border-color: #00a0a0;
+}
+
