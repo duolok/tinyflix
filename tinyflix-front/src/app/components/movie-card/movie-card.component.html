@@ -6,9 +6,9 @@
   <div class="wrapper">
     <h4 class="card-title">{{ movie.title }}</h4>
     <div class="mini-info">
-      <span class="genres"> {{ movie.genres }}</span>
+      <span class="release-year">{{ movie.releaseDate | dateFormat }}</span>
+      <span class="duration">{{ movie.duration }}min</span>
     </div>
     <div class="play-icon">▶</div>
   </div>
 </div>
-
