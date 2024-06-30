@@ -1,1 +1,170 @@
-<p>movie-update works!</p>
+<div class="min-h-full backgroundImagePopcorn">
+  <app-nav-bar></app-nav-bar>
+  <div class="wrapper">
+    <div class="container">
+      <h2>Update Movie</h2>
+      <div class="form-container">
+        <div class="file-upload-column">
+          <div class="form-group">
+            <label for="movieFile">Movie File</label><br />
+            <input
+              type="file"
+              class="file-input"
+              id="movieFile"
+              (change)="onFileChange($event, 'movie')"
+            />
+            <label for="movieFile" class="file-label">Choose Movie File</label>
+          </div>
+          <div class="form-group">
+            <label for="imageFile">Image File</label><br />
+            <input
+              type="file"
+              class="file-input"
+              id="imageFile"
+              (change)="onFileChange($event, 'image')"
+            />
+            <label for="imageFile" class="file-label">Choose Image File</label>
+
+            <div class="metadata-div">
+              <div>
+                <h3>Movie File Metadata:</h3>
+                <p><strong>File name:</strong> {{ movie.movieFilePath ? movie.movieFilePath.split('/').pop() : '' }}</p>
+                <p><strong>File type:</strong> {{ movie.movieFileType }}</p>
+                <p><strong>File size:</strong> {{ movie.movieFileSize }} bytes</p>
+                <p><strong>Creation time:</strong> {{ movie.movieFileCreationTime }}</p>
+                <p><strong>Last modified:</strong> {{ movie.movieFileLastModified }}</p>
+              </div>
+              <div>
+                <h3>Image File Metadata</h3>
+                <p><strong>File name:</strong> {{ movie.imageFilePath ? movie.imageFilePath.split('/').pop() : '' }}</p>
+                <p><strong>File type:</strong> {{ movie.imageFileType }}</p>
+                <p><strong>File size:</strong> {{ movie.imageFileSize }} bytes</p>
+                <p><strong>Creation time:</strong> {{ movie.imageFileCreationTime }}</p>
+                <p><strong>Last modified:</strong> {{ movie.imageFileLastModified }}</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="details-column">
+          <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="title">Title</label>
+              <input
+                type="text"
+                id="title"
+                formControlName="title"
+                class="form-control"
+              />
+            </div>
+            <div class="form-group">
+              <label for="duration">Duration</label>
+              <input
+                type="text"
+                id="duration"
+                formControlName="duration"
+                class="form-control"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="releaseDate">Release Date</label>
+              <div class="input-container">
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  id="releaseDate"
+                  formControlName="releaseDate"
+                  class="form-control"
+                />
+                <mat-datepicker-toggle matSuffix [for]="picker" class="datepicker-toggle"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea
+                id="description"
+                formControlName="description"
+                class="form-control"
+              ></textarea>
+            </div>
+
+            <div>
+              <div class="form-group">
+                <label for="actors">Actors</label>
+                <mat-form-field class="chip-list">
+                  <mat-chip-grid class="funny-row" #actorsChipList>
+                    <mat-chip-row
+                        *ngFor="let actor of actors"
+                        [removable]="removable"
+                        (removed)="removeActor(actor)">
+                      {{ actor }}
+                      <button matChipRemove *ngIf="removable">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip-row>
+                    <input
+                        placeholder="New actor..."
+                        [formControl]="actorCtrl"
+                        [matChipInputFor]="actorsChipList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        [matChipInputAddOnBlur]="addOnBlur"
+                        (matChipInputTokenEnd)="addActor($event)">
+                  </mat-chip-grid>
+                </mat-form-field>
+              </div>
+
+              <div class="form-group">
+                <label for="directors">Directors</label>
+                <mat-form-field class="chip-list">
+                  <mat-chip-grid class="funny-row" #directorsChipList>
+                    <mat-chip-row
+                        *ngFor="let director of directors"
+                        [removable]="removable"
+                        (removed)="removeDirector(director)">
+                      {{ director }}
+                      <button matChipRemove *ngIf="removable">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip-row>
+                    <input
+                        placeholder="New director..."
+                        [formControl]="directorCtrl"
+                        [matChipInputFor]="directorsChipList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        [matChipInputAddOnBlur]="addOnBlur"
+                        (matChipInputTokenEnd)="addDirector($event)">
+                  </mat-chip-grid>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Genres:</label>
+              <div class="checkbox-group">
+                <div *ngFor="let genre of genresList">
+                  <input
+                      type="checkbox"
+                      [value]="genre"
+                      [checked]="isGenreChecked(genre)"
+                      (change)="onCheckboxChange($event)"
+                      />
+                  <label>{{ genre }}</label>
+                </div>
+              </div>
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+                >
+                Upload
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
