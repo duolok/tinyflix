@@ -90,8 +90,12 @@ export class MovieDetailComponent implements OnInit {
     }
   }
 
-  addBookmark(): void { }
-  updateMovie(): void { }
+  addBookmark(): void {
+  }
+
+  updateMovie(): void {
+    this.router.navigate(['/movie-update', this.movie.name]);
+  }
 
   deleteMovie(): void {
     this.showConfirmDialog = true;
