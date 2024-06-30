@@ -39,7 +39,7 @@ export class LoginComponent {
     console.log(this.user);
     this.loading = true;
     this.authService.signIn(this.user).then((res) => {
-        this.router.navigateByUrl('/search');
+        this.router.navigateByUrl('/home');
         this.toastrService.success("Logged in successfully.");
         localStorage.setItem('token', res.signInUserSession.idToken.jwtToken)
       }).catch((err) => {
