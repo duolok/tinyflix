@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError, forkJoin } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable, throwError, forkJoin, map } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { cognito } from '../../environments/environment'; 
 import { AuthService } from './auth.service';
 
@@ -33,6 +33,10 @@ export class MovieService {
           imageFilePath: `${this.s3BucketUrl}/${movie.imageFilePath}`,
           movieFilePath: `${this.s3BucketUrl}/${movie.movieFilePath}`
         }));
+      }),
+      catchError(error => {
+        console.error('Error fetching movies.', error);
+        return throwError(error);
       })
     );
   }
@@ -50,45 +54,35 @@ export class MovieService {
     );
   }
 
-deleteMovie(id: string): Observable<any> {
+
+  deleteMovie(movieName: string, movieFilePath: string): Observable<any> {
     const headers = this.createAuthHeaders();
-    return this.httpClient.get(`${this.apiUrl}/movies/get-movie/${id}`, { headers }).pipe(
-      catchError(error => {
-        console.error('Error fetching movie metadata.', error);
-        return throwError(error);
-      }),
-      map((response: any) => response['Item']),
-      map(metadata => {
-        const fileDelete = this.deleteMovieFile(metadata.movieFilePath);
-        const metadataDelete = this.deleteMovieMetadata(id);
-        return forkJoin([fileDelete, metadataDelete]);
-      }),
-      catchError(error => {
-        console.error('Error deleting movie.', error);
-        return throwError(error);
-      })
-    );
+    const fileDeleteUrl = `${this.apiUrl}/movies/delete-movie-file`;
+    const metadataDeleteUrl = `${this.apiUrl}/movies/delete-movie-metadata`;
+
+    const fileDeletePayload = {
+      body: { movieFilePath } 
+    };
+    const metadataDeletePayload = {
+      'body': JSON.stringify({ movie_name: movieName })
+    };
+    console.log(metadataDeletePayload);
+
+    return forkJoin([
+      this.httpClient.request('DELETE', fileDeleteUrl, { headers, body: fileDeletePayload.body }),
+      this.httpClient.request('DELETE', metadataDeleteUrl, { headers, body: metadataDeletePayload.body })
+    ]).pipe(
+        map(responses => ({ 
+          fileDeletionResponse: responses[0], 
+          metadataDeletionResponse: responses[1] 
+        })),
+        catchError(error => {
+          console.error('Error deleting movie.', error);
+          return throwError(error);
+        })
+      );
   }
 
-  deleteMovieFile(url: string): Observable<any> {
-    const headers = this.createAuthHeaders();
-    return this.httpClient.delete(`${this.apiUrl}/movies/delete-movie-file`, { headers, body: { url } }).pipe(
-      catchError(error => {
-        console.error('Error deleting movie file.', error);
-        return throwError(error);
-      })
-    );
-  }
-
-  deleteMovieMetadata(metadata: any): Observable<any> {
-    const headers = this.createAuthHeaders();
-    return this.httpClient.post(`${this.apiUrl}/movies/delete-movie-metadata`, metadata, { headers }).pipe(
-      catchError(error => {
-        console.error('Error deleting movie metadata.', error);
-        return throwError(error);
-      })
-    );
-  }
   private createAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
     if (!token) {
@@ -98,10 +92,4 @@ deleteMovie(id: string): Observable<any> {
       'Authorization': `Bearer ${token}`
     });
   }
-
-
-  private getMoviesList(): any[] {
-    return [];
-  }
 }
-
