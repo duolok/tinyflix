@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { CommonModule, DatePipe } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
@@ -11,11 +11,13 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DeleteMovieDialogComponent } from '../../components/delete-movie-dialog/delete-movie-dialog.component';
+import { DateFormatPipe } from '../../pipes/date-format.pipe';
 
 @Component({
   selector: "app-movie-detail",
   standalone: true,
-  imports: [CommonModule, NavBarComponent, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatFormFieldModule],
+  imports: [CommonModule, NavBarComponent, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatFormFieldModule, DateFormatPipe],
+  providers: [DatePipe],
   templateUrl: "./movie-detail.component.html",
   styleUrls: ["./movie-detail.component.scss"],
 })
