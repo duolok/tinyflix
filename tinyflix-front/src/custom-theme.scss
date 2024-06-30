@@ -1,15 +1,9 @@
 // Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
-// Plus imports for other components in your app.
 @use 'sass:map';
-
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
 @include mat.core();
 
-$lunark-palette: (
+$tinyflix-palette: (
   50: #e0f7fa,
   100: #b2ebf2,
   200: #80deea,
@@ -34,60 +28,48 @@ $lunark-palette: (
   )
 );
 
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
-$lunark-front-primary: mat.define-palette($lunark-palette, 800);
-$lunark-front-accent: mat.define-palette(mat.$grey-palette, A200, A100, A400);
+$tinyflix-front-primary: mat.define-palette($tinyflix-palette, 800);
+$tinyflix-front-accent: mat.define-palette(mat.$grey-palette, A200, A100, A400);
+$tinyflix-front-warn: mat.define-palette(mat.$red-palette);
 
-// The warn palette is optional (defaults to red).
-$lunark-front-warn: mat.define-palette(mat.$red-palette);
-
-// Create the theme object. A theme consists of configurations for individual
-// theming systems such as "color" or "typography".
-$lunark-front-theme: mat.define-dark-theme((
+$tinyflix-front-theme: mat.define-dark-theme((
   color: (
-    primary: $lunark-front-primary,
-    accent: $lunark-front-accent,
-    warn: $lunark-front-warn,
+    primary: $tinyflix-front-primary,
+    accent: $tinyflix-front-accent,
+    warn: $tinyflix-front-warn,
   ),
   typography: mat.define-typography-config(),
   density: 0
 ));
 
-$lunark-front-theme-bigger-text: mat.define-dark-theme((
+$tinyflix-front-theme-bigger-text: mat.define-dark-theme((
   color: (
-    primary: $lunark-front-primary,
-    accent: $lunark-front-accent,
-    warn: $lunark-front-warn,
+    primary: $tinyflix-front-primary,
+    accent: $tinyflix-front-accent,
+    warn: $tinyflix-front-warn,
   ),
   typography: mat.define-typography-config(
     $body-2: mat.define-typography-level(20px, 20px, 400)
   ),
 ));
 
-// Sets background colors
 $dialog-background-color: #121212;
-$background-color: #1f1f1f;
-$color: map.get($lunark-front-theme, "color");
+$background-color: #333;
+$color: map.get($tinyflix-front-theme, "color");
 $colorBackground: map.get($color, "background");
 $colorBackground: map.set($colorBackground, "dialog", $dialog-background-color);
 $colorBackground: map.set($colorBackground, "raised-button", $dialog-background-color);
 $colorBackground: map.set($colorBackground, "background", $background-color);
 $color: map.set($color, "background", $colorBackground);
-$lunark-front-theme: map.set($lunark-front-theme, "color", $color);
+$tinyflix-front-theme: map.set($tinyflix-front-theme, "color", $color);
 
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include mat.all-component-themes($lunark-front-theme);
-
-@include mat.typography-hierarchy($lunark-front-theme);
+@include mat.all-component-themes($tinyflix-front-theme);
+@include mat.typography-hierarchy($tinyflix-front-theme);
 
 mat-form-field {
   --mdc-outlined-text-field-outline-color: #f0edee;
   --mdc-outlined-text-field-label-text-color: #f0edee;
 }
 
-@include mat.radio-typography($lunark-front-theme-bigger-text);
+@include mat.radio-typography($tinyflix-front-theme-bigger-text);
+
