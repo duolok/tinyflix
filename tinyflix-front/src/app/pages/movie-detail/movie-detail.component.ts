@@ -2,15 +2,20 @@ import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { NavBarComponent } from "../../components/nav-bar/nav-bar.component";
 import { MovieService } from "../../services/movie.service";
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { DeleteMovieDialogComponent } from '../../components/delete-movie-dialog/delete-movie-dialog.component';
 
 @Component({
   selector: "app-movie-detail",
   standalone: true,
-  imports: [CommonModule, NavBarComponent],
+  imports: [CommonModule, NavBarComponent, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatFormFieldModule],
   templateUrl: "./movie-detail.component.html",
   styleUrls: ["./movie-detail.component.scss"],
 })
@@ -23,6 +28,7 @@ export class MovieDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private movieService: MovieService,
     private toastrService: ToastrService,
     private dialog: MatDialog
@@ -84,13 +90,8 @@ export class MovieDetailComponent implements OnInit {
     }
   }
 
-  addBookmark(): void {
-    // Add bookmark implementation
-  }
-
-  updateMovie(): void {
-    // Update movie implementation
-  }
+  addBookmark(): void { }
+  updateMovie(): void { }
 
   deleteMovie(): void {
     this.showConfirmDialog = true;
@@ -98,20 +99,24 @@ export class MovieDetailComponent implements OnInit {
       width: "40%",
       backdropClass: "backdropBackground"
     });
+    let movieName = this.movie.id;
+    let folderId = this.movie.movieFilePath;
 
     dialogRef.afterClosed().subscribe(result => {
       this.showConfirmDialog = false;
       if (result) {
-        this.movieService.deleteMovie(this.movie.id).subscribe(
-          () => {
+        this.movieService.deleteMovie(this.movie.name, this.movie.movieFilePath).subscribe(
+          response => {
             this.toastrService.success('Movie deleted successfully.');
+            this.router.navigateByUrl('/search');
           },
-          (error) => {
+          error => {
             console.error('Error deleting movie', error);
             this.toastrService.error('Failed to delete movie.');
           }
         );
       }
-    });
-  }
+    });}
+
+
 }
