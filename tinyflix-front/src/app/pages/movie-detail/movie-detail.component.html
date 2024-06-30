@@ -22,9 +22,9 @@
       </div>
       <div class="details">
         <h2>Details</h2>
-        <p><strong>Director:</strong> {{ movie.directors }}</p>
-        <p><strong>Cast:</strong> {{ movie.actors }}</p>
-        <p><strong>Genres:</strong> {{ movie.genres }}</p>
+        <p><strong>Director:</strong> {{ movie.directors | peopleFormat }}</p>
+        <p><strong>Cast:</strong> {{ movie.actors | peopleFormat}}</p>
+        <p><strong>Genres:</strong> {{ movie.genres | peopleFormat }}</p>
         <p><strong>Relese Date:</strong> {{ movie.releaseDate | dateFormat }}</p>
         <p><strong>Duration:</strong> {{ movie.duration }}min</p>
       </div>

@@ -12,11 +12,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DeleteMovieDialogComponent } from '../../components/delete-movie-dialog/delete-movie-dialog.component';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
+import { PeopleFormatPipe } from '../../pipes/people-format.pipe';
 
 @Component({
   selector: "app-movie-detail",
   standalone: true,
-  imports: [CommonModule, NavBarComponent, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatFormFieldModule, DateFormatPipe],
+  imports: [CommonModule, NavBarComponent, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatFormFieldModule, DateFormatPipe, PeopleFormatPipe],
   providers: [DatePipe],
   templateUrl: "./movie-detail.component.html",
   styleUrls: ["./movie-detail.component.scss"],
