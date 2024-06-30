@@ -48,7 +48,7 @@ export class SignUpComponent {
 
   ngOnInit() {
     if (this.loginService.isLoggedIn()) {
-      this.router.navigateByUrl('/search');
+      this.router.navigateByUrl('/home');
     }
   }
 
