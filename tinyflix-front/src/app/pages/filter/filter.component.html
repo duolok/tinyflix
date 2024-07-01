@@ -5,13 +5,17 @@
       <p> Search for your favorite movies <p>
   </div>
   <div class="search-bar">
-    <input type="text" placeholder="Search movies..." />
-    <button class="search-button">
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Search movies..." />
+    <button class="search-button" (click)="searchMovies()">
       <mat-icon>search</mat-icon>
     </button>
   </div>
-  <div class="movie-categories ">
-    <app-movie-category ></app-movie-category>
+  <div class="movie-categories">
+    <div class="container">
+      <div class="container-inner flex gap-6">
+        <app-movie-card *ngFor="let movie of movies" [movie]="movie"></app-movie-card>
+      </div>
+    </div>
   </div>
 </div>
 
