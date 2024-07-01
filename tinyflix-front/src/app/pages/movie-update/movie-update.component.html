@@ -24,26 +24,24 @@
               (change)="onFileChange($event, 'image')"
             />
             <label for="imageFile" class="file-label">Choose Image File</label>
-
-            <div class="metadata-div">
+          </div>
+          <div class="metadata-div">
               <div>
                 <h3>Movie File Metadata:</h3>
-                <p><strong>File name:</strong> {{ movie.movieFilePath ? movie.movieFilePath.split('/').pop() : '' }}</p>
-                <p><strong>File type:</strong> {{ movie.movieFileType }}</p>
-                <p><strong>File size:</strong> {{ movie.movieFileSize }} bytes</p>
-                <p><strong>Creation time:</strong> {{ movie.movieFileCreationTime }}</p>
-                <p><strong>Last modified:</strong> {{ movie.movieFileLastModified }}</p>
+                <p><strong>File name:</strong> {{ fileMetadata.movie?.name }}</p>
+                <p><strong>File type:</strong> {{ fileMetadata.movie?.type }}</p>
+                <p><strong>File size:</strong> {{ fileMetadata.movie?.size }} bytes</p>
+                <p><strong>Creation time:</strong> {{ fileMetadata.movie?.creationTime }}</p>
+                <p><strong>Last modified:</strong> {{ fileMetadata.movie?.lastModified }}</p>
               </div>
               <div>
                 <h3>Image File Metadata</h3>
-                <p><strong>File name:</strong> {{ movie.imageFilePath ? movie.imageFilePath.split('/').pop() : '' }}</p>
-                <p><strong>File type:</strong> {{ movie.imageFileType }}</p>
-                <p><strong>File size:</strong> {{ movie.imageFileSize }} bytes</p>
-                <p><strong>Creation time:</strong> {{ movie.imageFileCreationTime }}</p>
-                <p><strong>Last modified:</strong> {{ movie.imageFileLastModified }}</p>
+                <p><strong>File name:</strong> {{ fileMetadata.image?.name }}</p>
+                <p><strong>File type:</strong> {{ fileMetadata.image?.type }}</p>
+                <p><strong>File size:</strong> {{ fileMetadata.image?.size }} bytes</p>
+                <p><strong>Creation time:</strong> {{ fileMetadata.image?.creationTime }}</p>
+                <p><strong>Last modified:</strong> {{ fileMetadata.image?.lastModified }}</p>
               </div>
-            </div>
-
           </div>
         </div>
         <div class="details-column">
@@ -66,7 +64,6 @@
                 class="form-control"
               />
             </div>
-
             <div class="form-group">
               <label for="releaseDate">Release Date</label>
               <div class="input-container">
@@ -81,7 +78,6 @@
                 <mat-datepicker #picker></mat-datepicker>
               </div>
             </div>
-
             <div class="form-group">
               <label for="description">Description</label>
               <textarea
@@ -90,7 +86,6 @@
                 class="form-control"
               ></textarea>
             </div>
-
             <div>
               <div class="form-group">
                 <label for="actors">Actors</label>
@@ -115,7 +110,6 @@
                   </mat-chip-grid>
                 </mat-form-field>
               </div>
-
               <div class="form-group">
                 <label for="directors">Directors</label>
                 <mat-form-field class="chip-list">
@@ -140,7 +134,6 @@
                 </mat-form-field>
               </div>
             </div>
-
             <div class="form-group">
               <label>Genres:</label>
               <div class="checkbox-group">
@@ -155,16 +148,11 @@
                 </div>
               </div>
             </div>
-
-            <button
-                type="submit"
-                class="btn btn-primary"
-                >
-                Upload
-            </button>
+            <button type="submit" class="btn btn-primary">Upload</button>
           </form>
         </div>
       </div>
     </div>
   </div>
 </div>
+
