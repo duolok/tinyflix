@@ -58,14 +58,13 @@ export class MovieService {
     return this.httpClient.patch(`${this.apiUrl}/update-movie/${movie.name}`, movie);
   }
 
-
   searchMovies(searchQuery: string): Observable<any[]> {
     const headers = this.createAuthHeaders();
     const params = new HttpParams().set('searchQuery', searchQuery);
 
-    return this.httpClient.get<any[]>(`${this.apiUrl}/movies/search`, { headers, params }).pipe(
+    return this.httpClient.get<any>(`${this.apiUrl}/movies/search`, { headers, params }).pipe(
       map(response => {
-        const movies = response; 
+        const movies = Array.isArray(response) ? response : response.data; 
         return movies.map((movie: any) => ({
           ...movie,
           actors: movie.actors.split('|'),  
@@ -81,7 +80,6 @@ export class MovieService {
       })
     );
   }
-
 
   deleteMovie(movieName: string, movieFilePath: string): Observable<any> {
     const headers = this.createAuthHeaders();
