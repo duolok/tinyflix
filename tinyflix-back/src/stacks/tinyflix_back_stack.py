@@ -58,7 +58,6 @@ class TinyflixBackStack(Stack):
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
 
-
         movie_bucket = s3.Bucket(
             self, "tinyflixMovieBucket",
             bucket_name="serverless-movie-bucket",
@@ -195,7 +194,6 @@ class TinyflixBackStack(Stack):
             [util_layer, service_layer, model_layer]
         )
 
-
         create_lambda(
             "deleteMovieMetadata",
             "delete_metadata.lambda_handler",
@@ -211,6 +209,15 @@ class TinyflixBackStack(Stack):
             "DELETE",
             [util_layer, service_layer, model_layer]
         )
+
+        create_lambda(
+            "searchAllMovies",
+            "search_movies.lambda_handler",
+            "src/lambda/search_all_movies",
+            "GET",
+            [util_layer, service_layer, model_layer]
+        )
+
 
         # create_lambda(
         #     "uploadMovieFile",
