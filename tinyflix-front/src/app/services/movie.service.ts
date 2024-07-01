@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError, forkJoin, map } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError, forkJoin } from 'rxjs';
 import { cognito } from '../../environments/environment'; 
 import { AuthService } from './auth.service';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +57,31 @@ export class MovieService {
   updateMovie(movie: any): Observable<any> {
     return this.httpClient.patch(`${this.apiUrl}/update-movie/${movie.name}`, movie);
   }
+
+
+  searchMovies(searchQuery: string): Observable<any[]> {
+    const headers = this.createAuthHeaders();
+    const params = new HttpParams().set('searchQuery', searchQuery);
+
+    return this.httpClient.get<any[]>(`${this.apiUrl}/movies/search`, { headers, params }).pipe(
+      map(response => {
+        const movies = response; 
+        return movies.map((movie: any) => ({
+          ...movie,
+          actors: movie.actors.split('|'),  
+          directors: movie.directors.split('|'),  
+          genres: movie.genres.split('|'),  
+          movieFilePath: `${this.s3BucketUrl}/${movie.movieFilePath}`,
+          imageFilePath: `${this.s3BucketUrl}/${movie.imageFilePath}`
+        }));
+      }),
+      catchError(error => {
+        console.error('Error searching movies.', error);
+        return throwError(error);
+      })
+    );
+  }
+
 
   deleteMovie(movieName: string, movieFilePath: string): Observable<any> {
     const headers = this.createAuthHeaders();
