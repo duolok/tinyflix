@@ -237,6 +237,14 @@ class TinyflixBackStack(Stack):
             [util_layer, service_layer, model_layer]
         )
 
+        create_lambda(
+            "updateMovie",
+            "update_movie.lambda_handler",
+            "src/lambda/update_movie",
+            "PATCH",
+            [util_layer, service_layer, model_layer]
+        )
+
 
         # create_lambda(
         #     "uploadMovieFile",
