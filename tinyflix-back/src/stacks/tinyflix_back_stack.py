@@ -28,6 +28,37 @@ class TinyflixBackStack(Stack):
             write_capacity=1
         )
 
+        movies_table.add_global_secondary_index(
+            index_name="TitleIndex",
+            partition_key=dynamodb.Attribute(name="title", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
+        )
+
+        movies_table.add_global_secondary_index(
+            index_name="ActorsIndex",
+            partition_key=dynamodb.Attribute(name="actors", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
+        )
+
+        movies_table.add_global_secondary_index(
+            index_name="DirectorsIndex",
+            partition_key=dynamodb.Attribute(name="directors", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
+        )
+
+        movies_table.add_global_secondary_index(
+            index_name="GenresIndex",
+            partition_key=dynamodb.Attribute(name="genres", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
+        )
+
+        movies_table.add_global_secondary_index(
+            index_name="DescptIndex",
+            partition_key=dynamodb.Attribute(name="description", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
+        )
+
+
         movie_bucket = s3.Bucket(
             self, "tinyflixMovieBucket",
             bucket_name="serverless-movie-bucket",
