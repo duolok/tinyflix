@@ -13,6 +13,13 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MovieService } from '../../services/movie.service';
+import { forkJoin, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+interface FileToUpload {
+  file: File;
+  key: string;
+}
 
 @Component({
   selector: 'app-movie-update',
@@ -94,7 +101,6 @@ export class MovieUpdateComponent implements OnInit {
     this.actors = this.movie.actors;
     this.directors = this.movie.directors;
 
-    // Clear the existing genres FormArray and repopulate it with the new genres
     const genresArray = this.updateForm.get('genres') as FormArray;
     genresArray.clear();
     this.movie.genres.forEach((genre: string) => {
@@ -169,38 +175,87 @@ export class MovieUpdateComponent implements OnInit {
 
   onSubmit() {
     if (this.updateForm.valid) {
-      const updatedMovie = {
+      const updatedMovie: any = {
         ...this.movie,
         title: this.updateForm.get('title')?.value,
         duration: this.updateForm.get('duration')?.value,
         releaseDate: this.updateForm.get('releaseDate')?.value,
         description: this.updateForm.get('description')?.value,
-        actors: this.actors,
-        directors: this.directors,
-        genres: this.updateForm.get('genres')?.value,
-        movieFilePath: this.movieFile ? `movies/${this.movie.name}/${this.movieFile.name}` : this.movie.movieFilePath,
-        imageFilePath: this.imageFile ? `movies/${this.movie.name}/${this.imageFile.name}` : this.movie.imageFilePath,
-        movieType: this.movieFile?.type,
-        movieSize: this.movieFile?.size,
-        movieLastModified: this.movieFile ? new Date(Date.now()) : this.movie.movieLastModified,
-        movieCreationTime: this.movieFile ? new Date(this.movieFile.lastModified) : this.movie.movieCreationTime,
-        imageType: this.imageFile?.type,
-        imageSize: this.imageFile?.size,
-        imageLastModified: this.imageFile ? new Date(this.imageFile.lastModified) : this.movie.imageLastModified,
-        imageCreationTime: this.imageFile ? new Date(this.imageFile.lastModified) : this.movie.imageCreationTime,
+        actors: this.actors.join('|'),
+        directors: this.directors.join('|'),
+        genres: (this.updateForm.get('genres')?.value || []).join('|'),
       };
 
-      this.movieService.updateMovie(updatedMovie).subscribe(
-        (response) => {
-          this.toastrService.success('Movie updated successfully.');
-          this.router.navigate(['/movies', updatedMovie.name]);
-        },
-        (error) => {
-          this.toastrService.error('Failed to update movie.');
-          console.error('Error updating movie', error);
-        }
-      );
+      if (this.movieFile) {
+        updatedMovie.movieFilePath = `movies/${this.movie.name}/${this.movieFile.name}`;
+        updatedMovie.movieFileType = this.movieFile.type;
+        updatedMovie.movieFileSize = this.movieFile.size;
+        updatedMovie.movieFileCreationTime = new Date(this.movieFile.lastModified);
+        updatedMovie.movieFileLastModified = new Date(this.movieFile.lastModified);
+      }
+
+      if (this.imageFile) {
+        updatedMovie.imageFilePath = `movies/${this.movie.name}/${this.imageFile.name}`;
+        updatedMovie.imageFileType = this.imageFile.type;
+        updatedMovie.imageFileSize = this.imageFile.size;
+        updatedMovie.imageFileCreationTime = new Date(this.imageFile.lastModified);
+        updatedMovie.imageFileLastModified = new Date(this.imageFile.lastModified);
+      }
+
+      const payload = {
+        object: updatedMovie,
+      };
+
+      const filesToUpload: FileToUpload[] = [];
+      if (this.movieFile) {
+        filesToUpload.push({ file: this.movieFile, key: updatedMovie.movieFilePath });
+      }
+      if (this.imageFile) {
+        filesToUpload.push({ file: this.imageFile, key: updatedMovie.imageFilePath });
+      }
+
+      if (filesToUpload.length > 0) {
+        const fileNames = filesToUpload.map(file => file.key);
+        this.movieService.getPresignedUrls(fileNames, this.movie.name).subscribe(
+          (presignedUrls) => {
+            const uploadObservables: Observable<any>[] = filesToUpload.map((fileToUpload, index) => 
+              this.movieService.uploadFile(presignedUrls.upload_urls[index], fileToUpload.file).pipe(
+                map(() => {
+                  if (fileToUpload.file === this.movieFile) {
+                    updatedMovie.movieFilePath = fileToUpload.key;
+                  } else if (fileToUpload.file === this.imageFile) {
+                    updatedMovie.imageFilePath = fileToUpload.key;
+                  }
+                })
+              )
+            );
+
+            forkJoin(uploadObservables).subscribe(() => {
+              this.updateMovie(payload);
+            });
+          },
+          (error) => {
+            this.toastrService.error('Failed to get presigned URLs.');
+            console.error('Error getting presigned URLs', error);
+          }
+        );
+      } else {
+        this.updateMovie(payload);
+      }
     }
+  }
+
+  private updateMovie(payload: any) {
+    this.movieService.updateMovie(payload).subscribe(
+      (response) => {
+        this.toastrService.success('Movie updated successfully.');
+        this.router.navigate(['/home', payload.object.name]);
+      },
+      (error) => {
+        this.toastrService.error('Failed to update movie.');
+        console.error('Error updating movie', error);
+      }
+    );
   }
 }
 
