@@ -77,7 +77,7 @@ input[type="text"]::placeholder {
   color: #bbb;
 }
 
-.movie-categories {
+.container {
   height: 120vh;
   gap: 10em;
   display: flex;
@@ -86,3 +86,27 @@ input[type="text"]::placeholder {
   position: relative;
   overflow: hidden; 
 }
+
+.container {
+  justify-content: center;
+  position: relative;
+  min-width: 100%;
+  padding: 3em 2em;
+  height: 26rem;
+}
+
+.heading {
+  font-family: rubik-bold;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px #000;
+  font-size: 4em;
+  padding-bottom: 0.8em;
+}
+
+.container-inner {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
