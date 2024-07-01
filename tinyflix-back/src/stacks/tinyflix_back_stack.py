@@ -101,6 +101,25 @@ class TinyflixBackStack(Stack):
             )
         )
 
+        index_arns = [
+            f"{movies_table.table_arn}/index/TitleIndex",
+            f"{movies_table.table_arn}/index/DescptIndex",
+            f"{movies_table.table_arn}/index/ActorsIndex",
+            f"{movies_table.table_arn}/index/DirectorsIndex",
+            f"{movies_table.table_arn}/index/GenresIndex",
+        ]
+
+        lambda_role.add_to_policy(
+            iam.PolicyStatement(
+                effect=iam.Effect.ALLOW,
+                actions=[
+                    "dynamodb:Query"
+                ],
+                resources=index_arns
+            )
+        )
+
+
         def create_lambda(id, handler, include_dir, method, layers):
             print(f"Creating Lambda function with id: {id}, handler: {handler}, directory: {include_dir}")
             function = _lambda.Function(
