@@ -55,8 +55,23 @@ export class MovieService {
   }
 
   updateMovie(movie: any): Observable<any> {
-    return this.httpClient.patch(`${this.apiUrl}/update-movie/${movie.name}`, movie);
+    const headers = this.createAuthHeaders();
+    return this.httpClient.patch(`${this.apiUrl}/movies/update-movie`, movie, { headers });
   }
+
+
+  getPresignedUrls(files: string[], title: string): Observable<any> {
+    return this.httpClient.put(`${this.apiUrl}/movies/upload-movie-file`, { files, title });
+  }
+
+  uploadFile(url: string, file: File): Observable<any> {
+    return this.httpClient.put(url, file, { responseType: 'text' });
+  }
+
+  saveMetadata(metadata: any): Observable<any> {
+    return this.httpClient.post(`${this.apiUrl}/movies/upload-movie-metadata`, metadata);
+  }
+
 
   searchMovies(searchQuery: string): Observable<any[]> {
     const headers = this.createAuthHeaders();
