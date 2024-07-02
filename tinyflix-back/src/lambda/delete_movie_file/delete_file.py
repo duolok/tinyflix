@@ -7,7 +7,7 @@ s3_client = boto3.client('s3')
 def lambda_handler(event, context):
     try:
         body = json.loads(event['body'])
-        movie_path = body['url']
+        movie_path = body['movieFilePath']
         bucket_name = os.environ['MOVIE_BUCKET']
         
         objects_to_delete = s3_client.list_objects(Bucket=bucket_name, Prefix=movie_path)
