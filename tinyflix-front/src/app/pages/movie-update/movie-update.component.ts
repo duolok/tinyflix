@@ -249,7 +249,7 @@ export class MovieUpdateComponent implements OnInit {
     this.movieService.updateMovie(payload).subscribe(
       (response) => {
         this.toastrService.success('Movie updated successfully.');
-        this.router.navigate(['/home', payload.object.name]);
+        this.router.navigate(['/movie', payload.object.name]);
       },
       (error) => {
         this.toastrService.error('Failed to update movie.');
