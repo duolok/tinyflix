@@ -101,21 +101,25 @@ export class MovieService {
     const fileDeleteUrl = `${this.apiUrl}/movies/delete-movie-file`;
     const metadataDeleteUrl = `${this.apiUrl}/movies/delete-movie-metadata`;
 
+    const url = new URL(movieFilePath);
+    const fullPath = url.pathname;
+    const directoryPath = fullPath.substring(1, fullPath.lastIndexOf('/'));
+    console.log(directoryPath);
+
     const fileDeletePayload = {
-      body: { movieFilePath } 
+      body: { movieFilePath: directoryPath }
     };
     const metadataDeletePayload = {
       'body': JSON.stringify({ movie_name: movieName })
     };
-    console.log(metadataDeletePayload);
 
     return forkJoin([
       this.httpClient.request('DELETE', fileDeleteUrl, { headers, body: fileDeletePayload.body }),
       this.httpClient.request('DELETE', metadataDeleteUrl, { headers, body: metadataDeletePayload.body })
     ]).pipe(
-        map(responses => ({ 
-          fileDeletionResponse: responses[0], 
-          metadataDeletionResponse: responses[1] 
+        map(responses => ({
+          fileDeletionResponse: responses[0],
+          metadataDeletionResponse: responses[1]
         })),
         catchError(error => {
           console.error('Error deleting movie.', error);
