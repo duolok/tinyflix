@@ -115,7 +115,7 @@ export class MovieDetailComponent implements OnInit {
         this.movieService.deleteMovie(this.movie.name, this.movie.movieFilePath).subscribe(
           response => {
             this.toastrService.success('Movie deleted successfully.');
-            this.router.navigateByUrl('/search');
+            this.router.navigateByUrl('/home');
           },
           error => {
             console.error('Error deleting movie', error);
