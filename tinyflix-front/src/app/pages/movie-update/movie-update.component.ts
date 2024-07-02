@@ -186,20 +186,32 @@ export class MovieUpdateComponent implements OnInit {
         genres: (this.updateForm.get('genres')?.value || []).join('|'),
       };
 
-      if (this.movieFile) {
+      if (this.movieFile != null) {
         updatedMovie.movieFilePath = `movies/${this.movie.name}/${this.movieFile.name}`;
         updatedMovie.movieFileType = this.movieFile.type;
         updatedMovie.movieFileSize = this.movieFile.size;
         updatedMovie.movieFileCreationTime = new Date(this.movieFile.lastModified);
         updatedMovie.movieFileLastModified = new Date(this.movieFile.lastModified);
+      } else if (this.movie.movieFilePath) {
+        updatedMovie.movieFilePath = this.movie.movieFilePath.split('.com/')[1]; 
+        updatedMovie.movieFileType = this.movie.movieFileType;
+        updatedMovie.movieFileSize = this.movie.movieFileSize;
+        updatedMovie.movieFileCreationTime = this.movie.movieFileCreationTime;
+        updatedMovie.movieFileLastModified = this.movie.movieFileLastModified;
       }
 
-      if (this.imageFile) {
+      if (this.imageFile != null) {
         updatedMovie.imageFilePath = `movies/${this.movie.name}/${this.imageFile.name}`;
         updatedMovie.imageFileType = this.imageFile.type;
         updatedMovie.imageFileSize = this.imageFile.size;
         updatedMovie.imageFileCreationTime = new Date(this.imageFile.lastModified);
         updatedMovie.imageFileLastModified = new Date(this.imageFile.lastModified);
+      } else if (this.movie.imageFilePath) {
+        updatedMovie.imageFilePath = this.movie.imageFilePath.split('.com/')[1]; 
+        updatedMovie.imageFileType = this.movie.imageFileType;
+        updatedMovie.imageFileSize = this.movie.imageFileSize;
+        updatedMovie.imageFileCreationTime = this.movie.imageFileCreationTime;
+        updatedMovie.imageFileLastModified = this.movie.imageFileLastModified;
       }
 
       const payload = {
@@ -257,5 +269,5 @@ export class MovieUpdateComponent implements OnInit {
       }
     );
   }
-}
 
+}
