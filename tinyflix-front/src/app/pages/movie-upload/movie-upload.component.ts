@@ -35,7 +35,7 @@ export class MovieUploadComponent {
   fileMetadata: any = {};
   movieFile: File | null = null;
   imageFile: File | null = null;
-  genresList: string[] = ['Romance', 'Action', 'Horror', 'Western', 'Sci-Fi', 'Comedy', 'Adventure', 'Crime'];
+  genresList: string[] = ['Romance', 'Action', 'Horror', 'Western', 'Sci-Fi', 'Comedy', 'Adventure', 'Crime', 'Biography', 'Drama'];
   actors: string[] = [];
   directors: string[] = [];
 
