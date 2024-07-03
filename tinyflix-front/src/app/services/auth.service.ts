@@ -99,5 +99,8 @@ export class AuthService {
   public getToken(): string | null {
     return this.tokenSubject.value;
   }
-}
 
+  public getUserId(): Promise<string> {
+    return this.getCurrentUser().then(user => user.attributes.email);
+  }
+}
