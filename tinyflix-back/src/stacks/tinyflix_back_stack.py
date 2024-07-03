@@ -1,14 +1,17 @@
 from constructs import Construct
+import aws_cdk as core
 from aws_cdk import (
     Duration,
     Stack,
     BundlingOptions,
     aws_dynamodb as dynamodb,
     aws_lambda as _lambda,
-    aws_apigateway as apigateway,
     aws_iam as iam,
     aws_s3 as s3,
     aws_logs as logs,
+    aws_stepfunctions as sfn,
+    aws_stepfunctions_tasks as tasks,
+    aws_s3_notifications as s3n
 )
 from aws_cdk.aws_lambda_python_alpha import PythonLayerVersion
 
@@ -119,8 +122,7 @@ class TinyflixBackStack(Stack):
             )
         )
 
-
-        def create_lambda(id, handler, include_dir, method, layers):
+        def create_lambda(id, handler, include_dir, layers):
             print(f"Creating Lambda function with id: {id}, handler: {handler}, directory: {include_dir}")
             function = _lambda.Function(
                 self, id,
@@ -173,100 +175,87 @@ class TinyflixBackStack(Stack):
             compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
         )
 
-        create_lambda(
+        ffmpeg_layer = _lambda.LayerVersion(
+            self, "ffmpegLayer",
+            code=_lambda.Code.from_asset("src/transcoder-layer.zip"),
+            compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
+        )
+
+        upload_metadata_lambda = create_lambda(
             "uploadMovieMetadata",
             "upload_metadata.lambda_handler",
             "src/lambda/upload_movie_metadata",
-            "POST",
             [util_layer, service_layer, model_layer]
         )
 
-        create_lambda(
+        upload_file_lambda = create_lambda(
             "uploadMovieFile",
             "upload_file.lambda_handler",
             "src/lambda/upload_movie_file",
-            "POST",
             [util_layer, service_layer, model_layer]
         )
 
-        create_lambda(
+        download_file_lambda = create_lambda(
             "downloadMovieFile",
             "download_file.lambda_handler",
             "src/lambda/download_movie_file",
-            "GET",
             [util_layer, service_layer, model_layer]
         )
 
-        create_lambda(
+        get_movies_lambda = create_lambda(
             "getAllMovies",
             "get_movies.lambda_handler",
             "src/lambda/get_all_movies",
-            "GET",
             [util_layer, service_layer, model_layer]
         )
 
-        create_lambda(
+        get_movie_lambda = create_lambda(
             "getMovie",
             "get_movie.lambda_handler",
             "src/lambda/get_movie",
-            "GET",
             [util_layer, service_layer, model_layer]
         )
 
-        create_lambda(
+        delete_metadata_lambda = create_lambda(
             "deleteMovieMetadata",
             "delete_metadata.lambda_handler",
             "src/lambda/delete_movie_metadata",
-            "DELETE",
             [util_layer, service_layer, model_layer]
         )
 
-        create_lambda(
+        delete_file_lambda = create_lambda(
             "deleteMovieFile",
             "delete_file.lambda_handler",
             "src/lambda/delete_movie_file",
-            "DELETE",
             [util_layer, service_layer, model_layer]
         )
 
-        create_lambda(
+        search_movies_lambda = create_lambda(
             "searchAllMovies",
             "search_movies.lambda_handler",
             "src/lambda/search_all_movies",
-            "GET",
             [util_layer, service_layer, model_layer]
         )
 
-        create_lambda(
+        update_movie_lambda = create_lambda(
             "updateMovie",
             "update_movie.lambda_handler",
             "src/lambda/update_movie",
-            "PATCH",
             [util_layer, service_layer, model_layer]
         )
 
+        transcode_movie_lambda = create_lambda(
+            "transcodeMovie",
+            "transcode.lambda_handler",
+            "src/lambda/transcode_movie",
+            [ffmpeg_layer, util_layer, service_layer, model_layer]
+        )
 
-        # create_lambda(
-        #     "uploadMovieFile",
-        #     "upload_movie_file.lambda_handler",
-        #     "src/lambda/upload_movie",
-        #     "POST",
-        #     [util_layer, service_layer, model_layer]
-        # )
+        # Add S3 event notification to trigger transcode lambda
+        movie_bucket.add_event_notification(
+            s3.EventType.OBJECT_CREATED,
+            s3n.LambdaDestination(transcode_movie_lambda)
+        )
 
-        # create_lambda(
-        #     "downloadMovieFile",
-        #     "download_movie_file.lambda_handler",
-        #     "src/lambda/download_movie",
-        #     "POST",
-        #     [util_layer, service_layer, model_layer]
-        # )
-
-        # The code that defines your stack goes here
-
-        # example resource
-        # queue = sqs.Queue(
-        #     self, "TinyflixBackQueue",
-        #     visibility_timeout=Duration.seconds(300),
-        # )
+        core.CfnOutput(self, "MovieBucketName", value=movie_bucket.bucket_name)
 
