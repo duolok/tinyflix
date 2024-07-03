@@ -9,9 +9,9 @@ from aws_cdk import (
     aws_iam as iam,
     aws_s3 as s3,
     aws_logs as logs,
-    aws_stepfunctions as sfn,
-    aws_stepfunctions_tasks as tasks,
-    aws_s3_notifications as s3n
+    aws_sns as sns,
+    aws_s3_notifications as s3n,
+    aws_lambda_event_sources as lambda_event_sources,
 )
 from aws_cdk.aws_lambda_python_alpha import PythonLayerVersion
 
@@ -20,6 +20,7 @@ class TinyflixBackStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        # Create DynamoDB Tables
         movies_table = dynamodb.Table(
             self, "MoviesTable",
             table_name="tinyflixMoviesTable",
@@ -28,9 +29,9 @@ class TinyflixBackStack(Stack):
                 type=dynamodb.AttributeType.STRING
             ),
             read_capacity=1,
-            write_capacity=1
+            write_capacity=1,
+            stream=dynamodb.StreamViewType.NEW_IMAGE  # Enable Streams
         )
-
 
         subscriptions_table = dynamodb.Table(
             self, "SubscriptionsTable",
@@ -43,42 +44,46 @@ class TinyflixBackStack(Stack):
             write_capacity=1
         )
 
-
+        # Add Global Secondary Indexes
         movies_table.add_global_secondary_index(
             index_name="TitleIndex",
             partition_key=dynamodb.Attribute(name="title", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
-
         movies_table.add_global_secondary_index(
             index_name="ActorsIndex",
             partition_key=dynamodb.Attribute(name="actors", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
-
         movies_table.add_global_secondary_index(
             index_name="DirectorsIndex",
             partition_key=dynamodb.Attribute(name="directors", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
-
         movies_table.add_global_secondary_index(
             index_name="GenresIndex",
             partition_key=dynamodb.Attribute(name="genres", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
-
         movies_table.add_global_secondary_index(
             index_name="DescptIndex",
             partition_key=dynamodb.Attribute(name="description", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
 
+        # Create S3 Bucket
         movie_bucket = s3.Bucket(
             self, "tinyflixMovieBucket",
             bucket_name="serverless-movie-bucket",
         )
 
+        # Create SNS Topic
+        notification_topic = sns.Topic(
+            self, "NotificationTopic",
+            topic_name="tinyflixNotificationTopic"
+        )
+
+        # Create IAM Role for Lambda
         lambda_role = iam.Role(
             self, "LambdaRole",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com")
@@ -98,7 +103,12 @@ class TinyflixBackStack(Stack):
                     "dynamodb:GetItem",
                     "dynamodb:PutItem",
                     "dynamodb:UpdateItem",
-                    "dynamodb:DeleteItem"
+                    "dynamodb:DeleteItem",
+                    "dynamodb:ListStreams",
+                    "dynamodb:GetRecords",
+                    "dynamodb:GetShardIterator",
+                    "dynamodb:DescribeStream",
+                    "dynamodb:ListStreams"
                 ],
                 resources=[movies_table.table_arn, subscriptions_table.table_arn]
             )
@@ -114,6 +124,17 @@ class TinyflixBackStack(Stack):
                     "s3:ListBucket"
                 ],
                 resources=[movie_bucket.bucket_arn, f"{movie_bucket.bucket_arn}/*"]
+            )
+        )
+
+        lambda_role.add_to_policy(
+            iam.PolicyStatement(
+                effect=iam.Effect.ALLOW,
+                actions=[
+                    "sns:Publish",
+                    "sns:Subscribe"
+                ],
+                resources=[notification_topic.topic_arn]
             )
         )
 
@@ -135,6 +156,32 @@ class TinyflixBackStack(Stack):
             )
         )
 
+        # Create Lambda Layers
+        model_layer = PythonLayerVersion(
+            self, 'ModelLayer',
+            entry='src/models',
+            compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
+        )
+
+        service_layer = PythonLayerVersion(
+            self, 'ServiceLayer',
+            entry='src/services',
+            compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
+        )
+
+        util_layer = PythonLayerVersion(
+            self, 'UtilityLayer',
+            entry='src/utility',
+            compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
+        )
+
+        ffmpeg_layer = _lambda.LayerVersion(
+            self, "ffmpegLayer",
+            code=_lambda.Code.from_asset("src/transcoder-layer.zip"),
+            compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
+        )
+
+        # Create Lambda Functions
         def create_lambda(id, handler, include_dir, layers):
             print(f"Creating Lambda function with id: {id}, handler: {handler}, directory: {include_dir}")
             function = _lambda.Function(
@@ -157,7 +204,8 @@ class TinyflixBackStack(Stack):
                 environment={
                     'MOVIE_TABLE': movies_table.table_name,
                     'SUBSCRIPTIONS_TABLE': subscriptions_table.table_name,
-                    'MOVIE_BUCKET': movie_bucket.bucket_name
+                    'MOVIE_BUCKET': movie_bucket.bucket_name,
+                    'NOTIFICATION_TOPIC_ARN': notification_topic.topic_arn
                 },
                 role=lambda_role,
                 log_retention=logs.RetentionDays.ONE_WEEK
@@ -168,32 +216,7 @@ class TinyflixBackStack(Stack):
                     allowed_origins=["*"]
                 )
             )
-            
             return function
-
-        model_layer = PythonLayerVersion(
-            self, 'ModelLayer',
-            entry='src/models',
-            compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
-        )
-
-        service_layer = PythonLayerVersion(
-            self, 'ServiceLayer',
-            entry='src/services',
-            compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
-        )
-        
-        util_layer = PythonLayerVersion(
-            self, 'UtilityLayer',
-            entry='src/utility',
-            compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
-        )
-
-        ffmpeg_layer = _lambda.LayerVersion(
-            self, "ffmpegLayer",
-            code=_lambda.Code.from_asset("src/transcoder-layer.zip"),
-            compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
-        )
 
         upload_metadata_lambda = create_lambda(
             "uploadMovieMetadata",
@@ -272,11 +295,28 @@ class TinyflixBackStack(Stack):
             [ffmpeg_layer, util_layer, service_layer, model_layer]
         )
 
-        # Add S3 event notification to trigger transcode lambda
         movie_bucket.add_event_notification(
             s3.EventType.OBJECT_CREATED,
             s3n.LambdaDestination(transcode_movie_lambda)
         )
 
+        notify_users_lambda = create_lambda(
+            "notifyUsers",
+            "notify.lambda_handler",
+            "src/lambda/notify_users",
+            [util_layer, service_layer, model_layer]
+        )
+
+        notify_users_lambda.add_event_source(
+            lambda_event_sources.DynamoEventSource(
+                movies_table,
+                starting_position=_lambda.StartingPosition.TRIM_HORIZON,
+                batch_size=10,
+                retry_attempts=3
+            )
+        )
+
+        # Output the bucket name and SNS topic ARN
         core.CfnOutput(self, "MovieBucketName", value=movie_bucket.bucket_name)
+        core.CfnOutput(self, "NotificationTopicArn", value=notification_topic.topic_arn)
 
