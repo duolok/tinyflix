@@ -1,8 +1,7 @@
 import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { NavBarComponent } from "../../components/nav-bar/nav-bar.component";
 import { MovieService } from "../../services/movie.service";
@@ -13,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { DeleteMovieDialogComponent } from '../../components/delete-movie-dialog/delete-movie-dialog.component';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { PeopleFormatPipe } from '../../pipes/people-format.pipe';
+import { SubscriptionDialogComponent } from '../../components/subscription-dialog/subscription-dialog.component';
 
 @Component({
   selector: "app-movie-detail",
@@ -93,7 +93,18 @@ export class MovieDetailComponent implements OnInit {
     }
   }
 
-  addBookmark(): void {
+  addSubscription(): void {
+    const dialogRef = this.dialog.open(SubscriptionDialogComponent, {
+      width: '40%',
+      backdropClass: 'backdropBackground',
+      data: { movie: this.movie } // Pass the movie data to the dialog
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.toastrService.success('Subscribed successfully.');
+      }
+    });
   }
 
   updateMovie(): void {
@@ -124,6 +135,5 @@ export class MovieDetailComponent implements OnInit {
         );
       }
     });}
-
-
 }
+
