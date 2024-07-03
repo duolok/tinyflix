@@ -1,0 +1,37 @@
+<div class="subscription-dialog-overlay">
+  <div class="subscription-dialog">
+    <h1>Subscribe</h1>
+    <p>Subscribe to updates for this movie based on your preferences.</p>
+    <form (ngSubmit)="subscribe()">
+      <label>
+        Choose criteria:
+        <select [(ngModel)]="selectedCriteria" name="criteria">
+          <option *ngFor="let criteria of criteriaOptions" [value]="criteria">{{criteria}}</option>
+        </select>
+      </label>
+      <label *ngIf="selectedCriteria === 'Actors'">
+        Actors:
+        <select [(ngModel)]="selectedActors" name="actors" multiple>
+          <option *ngFor="let actor of actors" [value]="actor">{{actor}}</option>
+        </select>
+      </label>
+      <label *ngIf="selectedCriteria === 'Directors'">
+        Directors:
+        <select [(ngModel)]="selectedDirectors" name="directors" multiple>
+          <option *ngFor="let director of directors" [value]="director">{{director}}</option>
+        </select>
+      </label>
+      <label *ngIf="selectedCriteria === 'Genres'">
+        Genres:
+        <select [(ngModel)]="selectedGenres" name="genres" multiple>
+          <option *ngFor="let genre of genres" [value]="genre">{{genre}}</option>
+        </select>
+      </label>
+      <div class="buttons-container">
+        <button mat-button type="submit">Subscribe</button>
+        <button mat-button type="button" (click)="close()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
