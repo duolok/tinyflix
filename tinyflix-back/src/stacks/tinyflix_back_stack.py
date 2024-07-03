@@ -31,6 +31,19 @@ class TinyflixBackStack(Stack):
             write_capacity=1
         )
 
+
+        subscriptions_table = dynamodb.Table(
+            self, "SubscriptionsTable",
+            table_name="tinyflixSubscriptionsTable",
+            partition_key=dynamodb.Attribute(
+                name="userId",
+                type=dynamodb.AttributeType.STRING
+            ),
+            read_capacity=1,
+            write_capacity=1
+        )
+
+
         movies_table.add_global_secondary_index(
             index_name="TitleIndex",
             partition_key=dynamodb.Attribute(name="title", type=dynamodb.AttributeType.STRING),
@@ -87,7 +100,7 @@ class TinyflixBackStack(Stack):
                     "dynamodb:UpdateItem",
                     "dynamodb:DeleteItem"
                 ],
-                resources=[movies_table.table_arn]
+                resources=[movies_table.table_arn, subscriptions_table.table_arn]
             )
         )
 
@@ -143,6 +156,7 @@ class TinyflixBackStack(Stack):
                 timeout=Duration.seconds(30),
                 environment={
                     'MOVIE_TABLE': movies_table.table_name,
+                    'SUBSCRIPTIONS_TABLE': subscriptions_table.table_name,
                     'MOVIE_BUCKET': movie_bucket.bucket_name
                 },
                 role=lambda_role,
@@ -241,6 +255,13 @@ class TinyflixBackStack(Stack):
             "updateMovie",
             "update_movie.lambda_handler",
             "src/lambda/update_movie",
+            [util_layer, service_layer, model_layer]
+        )
+
+        subscribe_content_lambda = create_lambda(
+            "subscribeToContent",
+            "subscribe.lambda_handler",
+            "src/lambda/subscribe_to_content",
             [util_layer, service_layer, model_layer]
         )
 
