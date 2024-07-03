@@ -6,6 +6,7 @@ from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ['SUBSCRIPTIONS_TABLE'])
+sns = boto3.client('sns')
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -17,6 +18,7 @@ def lambda_handler(event, context):
         body = json.loads(event['body'])
         user_id = body['userId']
         new_subscriptions = body['subscriptionCriteria']
+        email = body['userId']  
         
         logger.info("Processing subscriptions for user: %s", user_id)
         
@@ -41,12 +43,15 @@ def lambda_handler(event, context):
         
         table.update_item(
             Key={'userId': user_id},
-            UpdateExpression="SET subscriptions = :subscriptions",
+            UpdateExpression="SET subscriptions = :subscriptions, email = :email",
             ExpressionAttributeValues={
-                ':subscriptions': merged_subscriptions
+                ':subscriptions': merged_subscriptions,
+                ':email': email
             },
             ReturnValues="UPDATED_NEW"
         )
+
+        subscribe_to_sns_topic(email, os.environ['NOTIFICATION_TOPIC_ARN'])
         
         logger.info("Successfully updated subscriptions for user: %s", user_id)
         return create_response(200, json.dumps('Subscription added successfully!'), cors=True)
@@ -66,6 +71,18 @@ def merge_subscriptions(existing_subscriptions, new_subscriptions):
         else:
             existing_subscriptions[key] = new_subscriptions[key]
     return existing_subscriptions
+
+def subscribe_to_sns_topic(email, topic_arn):
+    try:
+        response = sns.subscribe(
+            TopicArn=topic_arn,
+            Protocol='email',
+            Endpoint=email
+        )
+        logger.info(f"Successfully subscribed {email} to topic {topic_arn}: {response['SubscriptionArn']}")
+    except ClientError as e:
+        logger.error(f"Error subscribing {email} to topic {topic_arn}: {e.response['Error']['Message']}")
+        raise e
 
 def create_response(status_code, body, cors=False):
     response = {
