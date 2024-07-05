@@ -288,6 +288,13 @@ class TinyflixBackStack(Stack):
             [util_layer, service_layer, model_layer]
         )
 
+        get_subscriptions_lambda = create_lambda(
+            "getSubscriptions",
+            "get_subscriptions.lambda_handler",
+            "src/lambda/get_subscriptions",
+            [util_layer, service_layer, model_layer]
+        )
+
         transcode_movie_lambda = create_lambda(
             "transcodeMovie",
             "transcode.lambda_handler",
@@ -306,6 +313,7 @@ class TinyflixBackStack(Stack):
             "src/lambda/notify_users",
             [util_layer, service_layer, model_layer]
         )
+
 
         notify_users_lambda.add_event_source(
             lambda_event_sources.DynamoEventSource(
