@@ -46,6 +46,31 @@ export class SubscriptionService {
     });
   }
 
+getSubscriptions(): Observable<any> {
+    return new Observable(observer => {
+      this.authService.getUserId().then(email => {
+        const headers = this.createAuthHeaders();
+        console.log(email);
+        this.httpClient.get(`${this.apiUrl}/content-management/get_subscriptions?email=${email}`, { headers }).pipe(
+          catchError(error => {
+            console.error('Error getting subscriptions.', error);
+            return throwError(error);
+          })
+        ).subscribe(
+          response => {
+            observer.next(response);
+            observer.complete();
+          },
+          error => {
+            observer.error(error);
+          }
+        );
+      }).catch(error => {
+        observer.error(error);
+      });
+    });
+  }
+
   private createAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
     if (!token) {
