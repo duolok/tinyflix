@@ -1,0 +1,124 @@
+.header {
+  font-family: 'Bayon', sans-serif;
+  letter-spacing: 1px;
+  font-weight: 400;
+  margin: 0;
+  font-size: 3.5em;
+  color: white;
+  text-align: center;
+  text-shadow: 0 0 10px #83c5be, 0 0 20px #006d77;
+}
+
+.search-bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #1e1e1e;
+  margin-top: 15em;
+  border-radius: 8px;
+}
+
+p {
+  color: #c1c1c1;
+  text-shadow: 0 0 10px #000;
+}
+
+.logo {
+  margin-bottom: 20px;
+}
+
+h2 {
+  color: #fff;
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #333;
+  border-radius: 25px;
+  padding: 5px 10px;
+  width: 100%;
+  max-width: 50em;
+}
+
+.filter-button,
+.search-button {
+  background-color: #444;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  margin: 0 5px;
+  transition: background-color 0.3s ease;
+}
+
+.filter-button:hover,
+.search-button:hover {
+  background-color: #555;
+}
+
+input[type="text"] {
+  flex-grow: 1;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  outline: none;
+  padding: 0 10px;
+  font-size: 16px;
+}
+
+input[type="text"]::placeholder {
+  color: #bbb;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
+  padding: 7em 2em;
+}
+
+.heading {
+  font-family: rubik-bold;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px #000;
+  font-size: 4em;
+  padding-bottom: 0.8em;
+}
+
+.movie-categories {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.container-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2em;
+  width: 100%;
+  max-width: 60em;
+  padding: 2em 1em;
+  box-sizing: border-box;
+  justify-content: center;
+}
+.movie-categories.single-result .container-inner {
+  display: flex;
+  justify-content: center;
+}
+
+.movie-categories:not(.single-result) .container-inner {
+  grid-template-columns: repeat(3, 1fr);
+}
+
