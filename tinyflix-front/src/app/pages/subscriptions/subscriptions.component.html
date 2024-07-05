@@ -9,28 +9,40 @@
   <div class="container">
     <div class="details">
       <h2>Genres</h2>
-      <div class="card" *ngFor="let genre of genres">
-        <div class="card-content">
-          <span>{{ genre }}</span>
-          <button (click)="cancelSubscription('genre', genre)">Cancel</button>
+      <div *ngIf="genres.length === 0" class="no-data">You're not following any genres.</div>
+      <div class="card-container">
+        <div class="card" *ngFor="let genre of genres">
+          <div class="card-content">
+            <span>{{ genre }}</span>
+            <button (click)="cancelSubscription('genre', genre)">Cancel</button>
+          </div>
         </div>
       </div>
 
       <h2>Actors</h2>
-      <div class="card" *ngFor="let actor of actors">
-        <div class="card-content">
-          <span>{{ actor }}</span>
-          <button (click)="cancelSubscription('actor', actor)">Cancel</button>
+      <div *ngIf="actors.length === 0" class="no-data">You're not following any actors.</div>
+      <div class="card-container">
+        <div class="card" *ngFor="let actor of actors">
+          <div class="card-content">
+            <span>{{ actor }}</span>
+            <button (click)="cancelSubscription('actor', actor)">Cancel</button>
+          </div>
         </div>
+
       </div>
 
       <h2>Directors</h2>
-      <div class="card" *ngFor="let director of directors">
-        <div class="card-content">
-          <span>{{ director }}</span>
-          <button (click)="cancelSubscription('director', director)">Cancel</button>
+      <div *ngIf="directors.length === 0" class="no-data">You're not following any directors.</div>
+      <div class="card-container">
+        <div class="card" *ngFor="let director of directors">
+          <div class="card-content">
+            <span>{{ director }}</span>
+            <button (click)="cancelSubscription('director', director)">Cancel</button>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
 </div>
+
