@@ -1,3 +1,10 @@
+$primary-color: #006d77;
+$background-color: #141414;
+$text-color: #ffffff;
+$secondary-color: #b3b3b3;
+$hover-darken: 10%;
+$transition-time: 0.3s;
+
 .header {
   font-family: 'Bayon', sans-serif;
   letter-spacing: 1px;
@@ -122,3 +129,87 @@ input[type="text"]::placeholder {
   grid-template-columns: repeat(3, 1fr);
 }
 
+
+.details {
+  width: 45%;
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(20, 20, 20, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+
+  margin-bottom: 1.5em;
+  font-size: 1.2em;
+  width: 100%;
+
+  h2 {
+    font-size: 2.5em;
+
+    color: $text-color;
+    font-family: bayon;
+    margin-bottom: 0.5em;
+    border-bottom: 2px solid $primary-color;
+    padding-bottom: 0.2em;
+  }
+
+  p {
+    font-size: 1.5em;
+    margin: 0.5em 0;
+    color: $text-color;
+
+    strong {
+      color: $text-color;
+    }
+  }
+}
+
+.card {
+  width: 190px;
+  height: 254px;
+  border-radius: 30px;
+  background: #212121;
+  box-shadow: 15px 15px 30px rgb(25, 25, 25), -15px -15px 30px rgb(60, 60, 60);
+  padding: 20px;
+  margin: 10px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-content span {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.card-content button {
+  background: #ff4081;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.card-content button:hover {
+  background: #f50057;
+}
+
+.details {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.details h2 {
+  width: 100%;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
