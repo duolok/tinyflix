@@ -2,6 +2,7 @@ import boto3
 import json
 import os
 from boto3.dynamodb.conditions import Key
+from decimal import Decimal
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ['MOVIE_TABLE'])
@@ -32,10 +33,16 @@ def query_index(index_name, search_term):
         print(f"Error querying index {index_name}: {str(e)}")
         return {}
 
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return super(DecimalEncoder, self).default(obj)
+
 def create_response(status_code, body, cors=False):
     response = {
         'statusCode': status_code,
-        'body': json.dumps(body),
+        'body': json.dumps(body, cls=DecimalEncoder),
         'headers': {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
