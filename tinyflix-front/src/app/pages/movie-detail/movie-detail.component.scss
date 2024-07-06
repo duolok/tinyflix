@@ -139,3 +139,21 @@ $transition-time: 0.3s;
   }
 }
 
+.movie-info {
+  .description,
+  .details {
+    p {
+      display: flex;
+      align-items: center;
+
+      strong {
+        margin-right: 0.5em;  
+      }
+
+      i {
+        margin-left: 0.5em;  
+      }
+    }
+  }
+}
+
