@@ -20,7 +20,6 @@ class TinyflixBackStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # Create DynamoDB Tables
         movies_table = dynamodb.Table(
             self, "MoviesTable",
             table_name="tinyflixMoviesTable",
@@ -30,7 +29,7 @@ class TinyflixBackStack(Stack):
             ),
             read_capacity=1,
             write_capacity=1,
-            stream=dynamodb.StreamViewType.NEW_IMAGE  
+            stream=dynamodb.StreamViewType.NEW_IMAGE  # Enable Streams
         )
 
         subscriptions_table = dynamodb.Table(
@@ -46,7 +45,7 @@ class TinyflixBackStack(Stack):
 
         ratings_table = dynamodb.Table(
             self, "RatingsTable",
-            table_name="tinyflixRatingTable",
+            table_name="tinyflixRatingsTable",
             partition_key=dynamodb.Attribute(
                 name="id",
                 type=dynamodb.AttributeType.STRING
@@ -60,41 +59,25 @@ class TinyflixBackStack(Stack):
             partition_key=dynamodb.Attribute(name="title", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
-
         movies_table.add_global_secondary_index(
             index_name="ActorsIndex",
             partition_key=dynamodb.Attribute(name="actors", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
-
         movies_table.add_global_secondary_index(
             index_name="DirectorsIndex",
             partition_key=dynamodb.Attribute(name="directors", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
-
         movies_table.add_global_secondary_index(
             index_name="GenresIndex",
             partition_key=dynamodb.Attribute(name="genres", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
-
         movies_table.add_global_secondary_index(
             index_name="DescptIndex",
             partition_key=dynamodb.Attribute(name="description", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
-        )
-
-        ratings_table.add_global_secondary_index(
-            index_name="EmailIndex",
-            partition_key=dynamodb.Attribute(name="email", type=dynamodb.AttributeType.STRING),
-            sort_key=dynamodb.Attribute(name="timestamp", type=dynamodb.AttributeType.STRING)
-        )
-
-        ratings_table.add_global_secondary_index(
-            index_name="MovieIdIndex",
-            partition_key=dynamodb.Attribute(name="movieId", type=dynamodb.AttributeType.STRING),
-            sort_key=dynamodb.Attribute(name="timestamp", type=dynamodb.AttributeType.STRING)
         )
 
         movie_bucket = s3.Bucket(
@@ -159,7 +142,9 @@ class TinyflixBackStack(Stack):
                 effect=iam.Effect.ALLOW,
                 actions=[
                     "sns:Publish",
-                    "sns:Subscribe"
+                    "sns:Subscribe",
+                    "sns:Unsubscribe",
+                    "sns:ListSubscriptionsByTopic"  
                 ],
                 resources=[notification_topic.topic_arn]
             )
@@ -183,6 +168,7 @@ class TinyflixBackStack(Stack):
             )
         )
 
+        # Create Lambda Layers
         model_layer = PythonLayerVersion(
             self, 'ModelLayer',
             entry='src/models',
@@ -311,6 +297,13 @@ class TinyflixBackStack(Stack):
             "subscribeToContent",
             "subscribe.lambda_handler",
             "src/lambda/subscribe_to_content",
+            [util_layer, service_layer, model_layer]
+        )
+
+        unsubscribe_content_lambda = create_lambda(
+            "unsubscribeFromContent",
+            "unsubscribe.lambda_handler",
+            "src/lambda/unsubscribe_from_content",
             [util_layer, service_layer, model_layer]
         )
 
