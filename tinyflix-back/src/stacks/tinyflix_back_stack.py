@@ -30,7 +30,7 @@ class TinyflixBackStack(Stack):
             ),
             read_capacity=1,
             write_capacity=1,
-            stream=dynamodb.StreamViewType.NEW_IMAGE  # Enable Streams
+            stream=dynamodb.StreamViewType.NEW_IMAGE  
         )
 
         subscriptions_table = dynamodb.Table(
@@ -60,40 +60,53 @@ class TinyflixBackStack(Stack):
             partition_key=dynamodb.Attribute(name="title", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
+
         movies_table.add_global_secondary_index(
             index_name="ActorsIndex",
             partition_key=dynamodb.Attribute(name="actors", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
+
         movies_table.add_global_secondary_index(
             index_name="DirectorsIndex",
             partition_key=dynamodb.Attribute(name="directors", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
+
         movies_table.add_global_secondary_index(
             index_name="GenresIndex",
             partition_key=dynamodb.Attribute(name="genres", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
+
         movies_table.add_global_secondary_index(
             index_name="DescptIndex",
             partition_key=dynamodb.Attribute(name="description", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
 
-        # Create S3 Bucket
+        ratings_table.add_global_secondary_index(
+            index_name="EmailIndex",
+            partition_key=dynamodb.Attribute(name="email", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="timestamp", type=dynamodb.AttributeType.STRING)
+        )
+
+        ratings_table.add_global_secondary_index(
+            index_name="MovieIdIndex",
+            partition_key=dynamodb.Attribute(name="movieId", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="timestamp", type=dynamodb.AttributeType.STRING)
+        )
+
         movie_bucket = s3.Bucket(
             self, "tinyflixMovieBucket",
             bucket_name="serverless-movie-bucket",
         )
 
-        # Create SNS Topic
         notification_topic = sns.Topic(
             self, "NotificationTopic",
             topic_name="tinyflixNotificationTopic"
         )
 
-        # Create IAM Role for Lambda
         lambda_role = iam.Role(
             self, "LambdaRole",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com")
@@ -170,7 +183,6 @@ class TinyflixBackStack(Stack):
             )
         )
 
-        # Create Lambda Layers
         model_layer = PythonLayerVersion(
             self, 'ModelLayer',
             entry='src/models',
