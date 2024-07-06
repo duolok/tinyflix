@@ -94,13 +94,15 @@ export class MovieDetailComponent implements OnInit {
   }
 
   addSubscription(): void {
+    this.showConfirmDialog = true;
     const dialogRef = this.dialog.open(SubscriptionDialogComponent, {
       width: '40%',
       backdropClass: 'backdropBackground',
-      data: { movie: this.movie } // Pass the movie data to the dialog
+      data: { movie: this.movie } 
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      this.showConfirmDialog = false;
       if (result) {
         this.toastrService.success('Subscribed successfully.');
       }
