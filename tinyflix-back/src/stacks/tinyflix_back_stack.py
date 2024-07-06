@@ -44,7 +44,17 @@ class TinyflixBackStack(Stack):
             write_capacity=1
         )
 
-        # Add Global Secondary Indexes
+        ratings_table = dynamodb.Table(
+            self, "RatingsTable",
+            table_name="tinyflixRatingTable",
+            partition_key=dynamodb.Attribute(
+                name="id",
+                type=dynamodb.AttributeType.STRING
+            ),
+            read_capacity=1,
+            write_capacity=1
+        )
+
         movies_table.add_global_secondary_index(
             index_name="TitleIndex",
             partition_key=dynamodb.Attribute(name="title", type=dynamodb.AttributeType.STRING),
@@ -110,7 +120,11 @@ class TinyflixBackStack(Stack):
                     "dynamodb:DescribeStream",
                     "dynamodb:ListStreams"
                 ],
-                resources=[movies_table.table_arn, subscriptions_table.table_arn]
+                resources=[
+                    movies_table.table_arn,
+                    subscriptions_table.table_arn,
+                    ratings_table.table_arn,
+                ]
             )
         )
 
@@ -181,7 +195,6 @@ class TinyflixBackStack(Stack):
             compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
         )
 
-        # Create Lambda Functions
         def create_lambda(id, handler, include_dir, layers):
             print(f"Creating Lambda function with id: {id}, handler: {handler}, directory: {include_dir}")
             function = _lambda.Function(
@@ -204,6 +217,7 @@ class TinyflixBackStack(Stack):
                 environment={
                     'MOVIE_TABLE': movies_table.table_name,
                     'SUBSCRIPTIONS_TABLE': subscriptions_table.table_name,
+                    'RATINGS_TABLE': ratings_table.table_name,
                     'MOVIE_BUCKET': movie_bucket.bucket_name,
                     'NOTIFICATION_TOPIC_ARN': notification_topic.topic_arn
                 },
@@ -302,16 +316,24 @@ class TinyflixBackStack(Stack):
             [ffmpeg_layer, util_layer, service_layer, model_layer]
         )
 
-        movie_bucket.add_event_notification(
-            s3.EventType.OBJECT_CREATED,
-            s3n.LambdaDestination(transcode_movie_lambda)
-        )
 
         notify_users_lambda = create_lambda(
             "notifyUsers",
             "notify.lambda_handler",
             "src/lambda/notify_users",
             [util_layer, service_layer, model_layer]
+        )
+
+        rate_movie_lambda = create_lambda(
+            "rateMovie",
+            "rate.lambda_handler",
+            "src/lambda/rate_movie",
+            [util_layer, service_layer, model_layer]
+        )
+
+        movie_bucket.add_event_notification(
+            s3.EventType.OBJECT_CREATED,
+            s3n.LambdaDestination(transcode_movie_lambda)
         )
 
 
@@ -324,7 +346,6 @@ class TinyflixBackStack(Stack):
             )
         )
 
-        # Output the bucket name and SNS topic ARN
         core.CfnOutput(self, "MovieBucketName", value=movie_bucket.bucket_name)
         core.CfnOutput(self, "NotificationTopicArn", value=notification_topic.topic_arn)
 
