@@ -12,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { DeleteMovieDialogComponent } from '../../components/delete-movie-dialog/delete-movie-dialog.component';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { PeopleFormatPipe } from '../../pipes/people-format.pipe';
+import { RatingDialogComponent } from '../../components/rating-dialog/rating-dialog.component';
 import { SubscriptionDialogComponent } from '../../components/subscription-dialog/subscription-dialog.component';
 
 @Component({
@@ -105,6 +106,30 @@ export class MovieDetailComponent implements OnInit {
       this.showConfirmDialog = false;
       if (result) {
         this.toastrService.success('Subscribed successfully.');
+      }
+    });
+  }
+
+
+  rateMovie(): void {
+    this.showConfirmDialog = true;
+    const dialogRef = this.dialog.open(RatingDialogComponent, {
+      width: '400px',
+      data: { movieTitle: this.movie.name }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.showConfirmDialog = false;
+      if (result) {
+        this.movieService.rateMovie(this.movie.name, result).subscribe(
+          (response) => {
+            this.toastrService.success('Rating added successfully.');
+          },
+          (error) => {
+            console.error('Error adding rating', error);
+            this.toastrService.error('Failed to add rating.');
+          }
+        );
       }
     });
   }
