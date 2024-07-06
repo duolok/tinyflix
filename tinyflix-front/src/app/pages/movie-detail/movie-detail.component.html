@@ -23,11 +23,12 @@
       </div>
       <div class="details">
         <h2>Details</h2>
-        <p><strong>Director:</strong> {{ movie.directors | peopleFormat }}</p>
-        <p><strong>Cast:</strong> {{ movie.actors | peopleFormat}}</p>
-        <p><strong>Genres:</strong> {{ movie.genres | peopleFormat }}</p>
-        <p><strong>Relese Date:</strong> {{ movie.releaseDate | dateFormat }}</p>
-        <p><strong>Duration:</strong> {{ movie.duration }}min</p>
+        <p><strong>Rating: </strong>   {{ movie.avg_rating | roundTwoDecimals }} / 10 <i class="cil-star"></i></p>
+        <p><strong>Director: </strong>   {{ movie.directors | peopleFormat }}</p>
+        <p><strong>Cast: </strong>   {{ movie.actors | peopleFormat}}</p>
+        <p><strong>Genres: </strong>   {{ movie.genres | peopleFormat }}</p>
+        <p><strong>Relese Date: </strong>   {{ movie.releaseDate | dateFormat }}</p>
+        <p><strong>Duration: </strong>   {{ movie.duration }}min</p>
       </div>
     </div>
   </div>
