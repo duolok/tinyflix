@@ -14,6 +14,7 @@
   text-align: center;
   background-color: rgba(30, 30, 30, 0.9);
   width: 30%;
+  min-height: 50%;
   padding: 2em;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -22,14 +23,23 @@
 
 h1 {
   color: #c1c1c1;
-  font-size: 2em;
+  font-size: 5em;
+  text-transform: uppercase;
   font-weight: bold;
   padding-bottom: 0.5em;
 }
 
-p {
+.big-paragraph {
+  color: #ccc;
+  font-size: 2em;
+  font-family: "Rubik-Regular";
+  padding-bottom: 0.5em;
+}
+
+.small-paragraph {
   color: #ccc;
   font-size: 1em;
+  font-family: "Rubik-Regular";
   padding-bottom: 0.5em;
 }
 
@@ -98,3 +108,56 @@ button:hover {
 }
 
 
+select {
+  width: 100%;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #ccc;
+  font-size: 1.2em;
+  appearance: none; 
+}
+
+select option {
+  background-color: #2a2a2a;
+  color: #ccc;
+}
+
+select:focus {
+  outline: none;
+  border-color: #666666;
+}
+
+.select-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.select-container::after {
+  content: '\25BC'; 
+  position: absolute;
+  right: 1em;
+  color: #ccc;
+  pointer-events: none;
+}
+
+label {
+  color: #ccc;
+  display: block;
+  margin-bottom: 1em;
+}
+
+input, select {
+  width: 100%;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #ccc;
+}
