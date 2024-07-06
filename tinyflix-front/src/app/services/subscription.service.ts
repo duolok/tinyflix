@@ -46,7 +46,7 @@ export class SubscriptionService {
     });
   }
 
-getSubscriptions(): Observable<any> {
+  getSubscriptions(): Observable<any> {
     return new Observable(observer => {
       this.authService.getUserId().then(email => {
         const headers = this.createAuthHeaders();
@@ -54,6 +54,35 @@ getSubscriptions(): Observable<any> {
         this.httpClient.get(`${this.apiUrl}/content-management/get_subscriptions?email=${email}`, { headers }).pipe(
           catchError(error => {
             console.error('Error getting subscriptions.', error);
+            return throwError(error);
+          })
+        ).subscribe(
+          response => {
+            observer.next(response);
+            observer.complete();
+          },
+          error => {
+            observer.error(error);
+          }
+        );
+      }).catch(error => {
+        observer.error(error);
+      });
+    });
+  }
+
+  unsubscribe(subscriptionCriteria: any): Observable<any> {
+    return new Observable(observer => {
+      this.authService.getUserId().then(email => {
+        const headers = this.createAuthHeaders();
+        const payload = {
+          userId: email,
+          subscriptionCriteria: subscriptionCriteria
+        };
+
+        this.httpClient.post(`${this.apiUrl}/content-management/unsubscribe`, payload, { headers }).pipe(
+          catchError(error => {
+            console.error('Error cancelling subscription.', error);
             return throwError(error);
           })
         ).subscribe(
