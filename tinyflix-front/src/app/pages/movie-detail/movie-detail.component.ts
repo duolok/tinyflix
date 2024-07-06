@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DeleteMovieDialogComponent } from '../../components/delete-movie-dialog/delete-movie-dialog.component';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
+import { RoundTwoDecimalsPipe } from '../../pipes/round-two-decimals.pipe';
 import { PeopleFormatPipe } from '../../pipes/people-format.pipe';
 import { RatingDialogComponent } from '../../components/rating-dialog/rating-dialog.component';
 import { SubscriptionDialogComponent } from '../../components/subscription-dialog/subscription-dialog.component';
@@ -18,8 +19,8 @@ import { SubscriptionDialogComponent } from '../../components/subscription-dialo
 @Component({
   selector: "app-movie-detail",
   standalone: true,
-  imports: [CommonModule, NavBarComponent, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatFormFieldModule, DateFormatPipe, PeopleFormatPipe],
-  providers: [DatePipe],
+  imports: [CommonModule, NavBarComponent, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatFormFieldModule, DateFormatPipe, RoundTwoDecimalsPipe, PeopleFormatPipe],
+  providers: [DatePipe, RoundTwoDecimalsPipe],
   templateUrl: "./movie-detail.component.html",
   styleUrls: ["./movie-detail.component.scss"],
 })
