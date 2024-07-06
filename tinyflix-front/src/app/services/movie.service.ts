@@ -54,6 +54,39 @@ export class MovieService {
     );
   }
 
+
+
+  rateMovie(movieId: string, rating: number): Observable<any> {
+    return new Observable(observer => {
+      this.authService.getUserId().then(email => {
+        const headers = this.createAuthHeaders();
+        const body = {
+          movie_id: movieId,
+          email: email, 
+          rating: rating
+        };
+        this.httpClient.patch(`${this.apiUrl}/movies/rate-movie`, body, { headers }).pipe(
+          catchError(error => {
+            console.error('Error rating movie.', error);
+            return throwError(error);
+          })
+        ).subscribe(
+            response => {
+              observer.next(response);
+              observer.complete();
+            },
+            error => {
+              observer.error(error);
+            }
+          );
+
+      }).catch(error => {
+          observer.error(error);
+        })
+    })
+
+  }
+
   updateMovie(movie: any): Observable<any> {
     const headers = this.createAuthHeaders();
     return this.httpClient.patch(`${this.apiUrl}/movies/update-movie`, movie, { headers });
