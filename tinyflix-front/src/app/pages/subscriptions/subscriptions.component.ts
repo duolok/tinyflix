@@ -6,6 +6,8 @@ import { CommonModule } from "@angular/common";
 import { Router } from '@angular/router';
 import { SubscriptionService } from '../../services/subscription.service';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { UnsubscribeDialogComponent } from '../../components/unsubscribe-dialog/unsubscribe-dialog.component';
 
 @Component({
   selector: 'app-subscriptions',
@@ -20,7 +22,11 @@ export class SubscriptionsComponent implements OnInit {
   directors: string[] = [];
   searchQuery: string = '';
 
-  constructor(private router: Router, private subscriptionService: SubscriptionService) {}
+  constructor(
+    private router: Router,
+    private subscriptionService: SubscriptionService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.loadSubscriptions();
@@ -42,8 +48,27 @@ export class SubscriptionsComponent implements OnInit {
   }
 
   cancelSubscription(type: string, value: string) {
-    console.log(`Canceling subscription for ${type}: ${value}`);
-    // Implement the logic to cancel the subscription
+    const dialogRef = this.dialog.open(UnsubscribeDialogComponent, {
+      data: { type, value },
+      width: "40%",
+      backdropClass: "backdropBackground"
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const subscriptionCriteria = { [type]: [{ "S": value }] };
+        console.log(subscriptionCriteria);
+        this.subscriptionService.unsubscribe(subscriptionCriteria).subscribe(
+          response => {
+            console.log('Subscription cancelled:', response);
+            this.loadSubscriptions(); 
+          },
+          error => {
+            console.error('Error cancelling subscription.', error);
+          }
+        );
+      }
+    });
   }
 }
 
