@@ -20,7 +20,7 @@ export class RatingDialogComponent {
     this.movieTitle = data.movieTitle;
   }
 
-  onNoClick(): void {
+  close(): void {
     this.dialogRef.close();
   }
 
