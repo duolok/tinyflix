@@ -29,7 +29,7 @@ class TinyflixBackStack(Stack):
             ),
             read_capacity=1,
             write_capacity=1,
-            stream=dynamodb.StreamViewType.NEW_IMAGE  # Enable Streams
+            stream=dynamodb.StreamViewType.NEW_IMAGE  
         )
 
         subscriptions_table = dynamodb.Table(
@@ -54,7 +54,6 @@ class TinyflixBackStack(Stack):
             write_capacity=1
         )
 
-
         user_actions_table = dynamodb.Table(
             self, "UserActionsTable",
             table_name="tinyflixUserActionsTable",
@@ -63,9 +62,20 @@ class TinyflixBackStack(Stack):
                 type=dynamodb.AttributeType.STRING
             ),
             read_capacity=1,
-            write_capacity=1
+            write_capacity=1,
+            stream=dynamodb.StreamViewType.NEW_IMAGE  
         )
 
+        top_movies_table = dynamodb.Table(
+            self, "TopMoviesTable",
+            table_name="tinyflixTopMoviesTable",
+            partition_key=dynamodb.Attribute(
+                name="userId",
+                type=dynamodb.AttributeType.STRING
+            ),
+            read_capacity=1,
+            write_capacity=1
+        )
 
         movies_table.add_global_secondary_index(
             index_name="TitleIndex",
@@ -144,6 +154,7 @@ class TinyflixBackStack(Stack):
                     subscriptions_table.table_arn,
                     ratings_table.table_arn,
                     user_actions_table.table_arn,
+                    top_movies_table.table_arn,
                 ]
             )
         )
@@ -192,7 +203,6 @@ class TinyflixBackStack(Stack):
             )
         )
 
-        # Create Lambda Layers
         model_layer = PythonLayerVersion(
             self, 'ModelLayer',
             entry='src/models',
@@ -241,6 +251,7 @@ class TinyflixBackStack(Stack):
                     'SUBSCRIPTIONS_TABLE': subscriptions_table.table_name,
                     'RATINGS_TABLE': ratings_table.table_name,
                     'USER_ACTIONS_TABLE': user_actions_table.table_name,
+                    'TOP_MOVIES_TABLE': top_movies_table.table_name,
                     'MOVIE_BUCKET': movie_bucket.bucket_name,
                     'NOTIFICATION_TOPIC_ARN': notification_topic.topic_arn
                 },
@@ -346,14 +357,12 @@ class TinyflixBackStack(Stack):
             [util_layer, service_layer, model_layer]
         )
 
-
         transcode_movie_lambda = create_lambda(
             "transcodeMovie",
             "transcode.lambda_handler",
             "src/lambda/transcode_movie",
             [ffmpeg_layer, util_layer, service_layer, model_layer]
         )
-
 
         notify_users_lambda = create_lambda(
             "notifyUsers",
@@ -374,7 +383,6 @@ class TinyflixBackStack(Stack):
             s3n.LambdaDestination(transcode_movie_lambda)
         )
 
-
         notify_users_lambda.add_event_source(
             lambda_event_sources.DynamoEventSource(
                 movies_table,
@@ -384,6 +392,16 @@ class TinyflixBackStack(Stack):
             )
         )
 
+        generate_feed_lambda.add_event_source(
+            lambda_event_sources.DynamoEventSource(
+                user_actions_table,
+                starting_position=_lambda.StartingPosition.TRIM_HORIZON,
+                batch_size=10,
+                retry_attempts=3
+            )
+        )
+
         core.CfnOutput(self, "MovieBucketName", value=movie_bucket.bucket_name)
         core.CfnOutput(self, "NotificationTopicArn", value=notification_topic.topic_arn)
+
 
