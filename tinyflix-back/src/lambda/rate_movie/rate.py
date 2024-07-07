@@ -8,6 +8,7 @@ from datetime import datetime
 dynamodb = boto3.resource('dynamodb')
 ratings_table = dynamodb.Table(os.environ['RATINGS_TABLE'])
 movies_table = dynamodb.Table(os.environ['MOVIE_TABLE'])
+user_actions_table = dynamodb.Table(os.environ['USER_ACTIONS_TABLE'])
 
 def lambda_handler(event, context):
     try:
@@ -57,6 +58,8 @@ def lambda_handler(event, context):
                 ':rate_count': new_rate_count
             }
         )
+    
+        log_user_action(body['email'], 'rating', body['movie_id'], {'rating': rating})
         return create_response(200, json.dumps({'message': 'Rating added and movie stats updated successfully!'}, default=str), cors=True)
 
     except json.JSONDecodeError as e:
@@ -68,6 +71,22 @@ def lambda_handler(event, context):
     except Exception as e:
         print("Exception: ", str(e))
         return create_response(500, json.dumps({'error': str(e)}), cors=True)
+
+def log_user_action(user_id, action, movie_id, details):
+    try:
+        user_actions_table.put_item(
+            Item={
+                'id': str(uuid1()),
+                'userId': user_id,
+                'timestamp': datetime.utcnow().isoformat(),
+                'action': action,
+                'movieId': movie_id,
+                'details': details
+            }
+        )
+    except Exception as e:
+        print(f"Error logging user action: {str(e)}")
+        raise e
 
 def create_response(status_code, body, cors=False):
     response = {
