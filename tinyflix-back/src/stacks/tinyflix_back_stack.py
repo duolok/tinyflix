@@ -44,8 +44,8 @@ class TinyflixBackStack(Stack):
         )
 
         ratings_table = dynamodb.Table(
-            self, "RatingsTable",
-            table_name="tinyflixRatingsTable",
+            self, "RatingTable",
+            table_name="tinyflixRatingTable",
             partition_key=dynamodb.Attribute(
                 name="id",
                 type=dynamodb.AttributeType.STRING
@@ -54,30 +54,53 @@ class TinyflixBackStack(Stack):
             write_capacity=1
         )
 
+
+        user_actions_table = dynamodb.Table(
+            self, "UserActionsTable",
+            table_name="tinyflixUserActionsTable",
+            partition_key=dynamodb.Attribute(
+                name="id",
+                type=dynamodb.AttributeType.STRING
+            ),
+            read_capacity=1,
+            write_capacity=1
+        )
+
+
         movies_table.add_global_secondary_index(
             index_name="TitleIndex",
             partition_key=dynamodb.Attribute(name="title", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
+
         movies_table.add_global_secondary_index(
             index_name="ActorsIndex",
             partition_key=dynamodb.Attribute(name="actors", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
+
         movies_table.add_global_secondary_index(
             index_name="DirectorsIndex",
             partition_key=dynamodb.Attribute(name="directors", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
+
         movies_table.add_global_secondary_index(
             index_name="GenresIndex",
             partition_key=dynamodb.Attribute(name="genres", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
         )
+
         movies_table.add_global_secondary_index(
             index_name="DescptIndex",
             partition_key=dynamodb.Attribute(name="description", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="releaseDate", type=dynamodb.AttributeType.STRING)
+        )
+
+        user_actions_table.add_global_secondary_index(
+            index_name="EmailIndex",
+            partition_key=dynamodb.Attribute(name="email", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="timestamp", type=dynamodb.AttributeType.STRING)
         )
 
         movie_bucket = s3.Bucket(
@@ -120,6 +143,7 @@ class TinyflixBackStack(Stack):
                     movies_table.table_arn,
                     subscriptions_table.table_arn,
                     ratings_table.table_arn,
+                    user_actions_table.table_arn,
                 ]
             )
         )
@@ -216,6 +240,7 @@ class TinyflixBackStack(Stack):
                     'MOVIE_TABLE': movies_table.table_name,
                     'SUBSCRIPTIONS_TABLE': subscriptions_table.table_name,
                     'RATINGS_TABLE': ratings_table.table_name,
+                    'USER_ACTIONS_TABLE': user_actions_table.table_name,
                     'MOVIE_BUCKET': movie_bucket.bucket_name,
                     'NOTIFICATION_TOPIC_ARN': notification_topic.topic_arn
                 },
@@ -313,6 +338,14 @@ class TinyflixBackStack(Stack):
             "src/lambda/get_subscriptions",
             [util_layer, service_layer, model_layer]
         )
+
+        generate_feed_lambda = create_lambda(
+            "generateFeed",
+            "feed.lambda_handler",
+            "src/lambda/generate_feed",
+            [util_layer, service_layer, model_layer]
+        )
+
 
         transcode_movie_lambda = create_lambda(
             "transcodeMovie",
