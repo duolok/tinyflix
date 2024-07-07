@@ -43,18 +43,35 @@ export class MovieService {
 
   downloadMovie(filePath: string): Observable<string> {
     const fileKey = filePath.substring(filePath.indexOf('movies/'));
-    const params = new HttpParams().set('file_key', fileKey);
-    const headers = this.createAuthHeaders();
-    return this.httpClient.get<{ presigned_url: string }>(`${this.apiUrl}/movies/download-movie-file`, { params, headers }).pipe(
-      map(response => response.presigned_url),
-      catchError(error => {
-        console.error('Error downloading movie.', error);
-        return throwError(error);
-      })
-    );
+
+    return new Observable(observer => {
+      this.authService.getUserId().then(email => {
+        const params = new HttpParams()
+        .set('file_key', fileKey)
+        .set('email', email); 
+        const headers = this.createAuthHeaders();
+
+        this.httpClient.get<{ presigned_url: string }>(`${this.apiUrl}/movies/download-movie-file`, { params, headers }).pipe(
+          map(response => response.presigned_url),
+          catchError(error => {
+            console.error('Error downloading movie.', error);
+            return throwError(error);
+          })
+        ).subscribe(
+            presignedUrl => {
+              observer.next(presignedUrl);
+              observer.complete();
+            },
+            error => {
+              observer.error(error);
+            }
+          );
+      }).catch(error => {
+          console.error('Error getting user email.', error);
+          observer.error(error);
+        });
+    });
   }
-
-
 
   rateMovie(movieId: string, rating: number): Observable<any> {
     return new Observable(observer => {
