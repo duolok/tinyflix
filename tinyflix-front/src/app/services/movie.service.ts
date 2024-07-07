@@ -178,6 +178,69 @@ export class MovieService {
       );
   }
 
+  getFeedMovies(): Observable<any[]> {
+    return new Observable(observer => {
+      this.authService.getUserId().then(userId => {
+        const params = new HttpParams().set('userId', userId);
+        const headers = this.createAuthHeaders();
+
+        this.httpClient.get<any>(`${this.apiUrl}/content-management/get-feed`, { params, headers }).pipe(
+          map(response => {
+            console.log('API Response:', response);  
+
+            if (!response || !Array.isArray(response.data)) {
+              console.error('Invalid response format:', response);
+              return [];
+            }
+
+            const movies = response.data.reduce((acc: any[], item: any) => {
+              if (!item.movies || !Array.isArray(item.movies)) {
+                console.error('Invalid movies format in item:', item);
+                return acc;
+              }
+
+              const processedMovies = item.movies.map((movieItem: any) => {
+                const movie = movieItem.movie || {};
+                console.log('Processing movie item:', movieItem);
+                return {
+                  ...movie,
+                  actors: movie.actors ? movie.actors.split('|') : [],
+                  directors: movie.directors ? movie.directors.split('|') : [],
+                  genres: movie.genres ? movie.genres.split('|') : [],
+                  movieFilePath: movie.movieFilePath ? `${this.s3BucketUrl}/${movie.movieFilePath}` : '',
+                  imageFilePath: movie.imageFilePath ? `${this.s3BucketUrl}/${movie.imageFilePath}` : '',
+                  score: movieItem.score || 0
+                };
+              });
+
+              return acc.concat(processedMovies);
+            }, []);
+
+            console.log('Processed movies:', movies);
+            return movies;
+          }),
+          catchError(error => {
+            console.error('Error fetching feed movies:', error);
+            return throwError(error);
+          })
+        ).subscribe(
+            movies => {
+              observer.next(movies);
+              observer.complete();
+            },
+            error => {
+              observer.error(error);
+            }
+          );
+      }).catch(error => {
+          console.error('Error getting user ID:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+
+
   private createAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
     if (!token) {
@@ -188,3 +251,4 @@ export class MovieService {
     });
   }
 }
+
