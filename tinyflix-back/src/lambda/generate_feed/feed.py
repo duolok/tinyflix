@@ -11,6 +11,7 @@ logger.setLevel(logging.INFO)
 dynamodb = boto3.resource('dynamodb')
 user_actions_table = dynamodb.Table(os.environ['USER_ACTIONS_TABLE'])
 movies_table = dynamodb.Table(os.environ['MOVIE_TABLE'])
+top_movies_table = dynamodb.Table(os.environ['TOP_MOVIES_TABLE'])
 
 def lambda_handler(event, context):
     logger.info("Received event: %s", event)
@@ -22,6 +23,10 @@ def lambda_handler(event, context):
         recommended_movies = generate_feed(preferences)
         
         logger.info("Recommended movies: %s", recommended_movies)
+
+        store_top_movies(user_id, recommended_movies)
+
+
         return create_response(200, json.dumps(recommended_movies, default=str), cors=True)
     except Exception as e:
         logger.error("Error processing request: %s", e)
@@ -124,6 +129,15 @@ def calculate_movie_scores(movies, preferences):
 def sort_movies_by_score(movie_scores):
     sorted_scores = sorted(movie_scores, key=lambda x: x['score'], reverse=True)
     return sorted_scores
+
+def store_top_movies(user_id, movies):
+    top_movies = movies[:5]
+    top_movies_data = {
+        'userId': user_id,
+        'movies': top_movies,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    top_movies_table.put_item(Item=top_movies_data)
 
 def create_response(status_code, body, cors=False):
     response = {
