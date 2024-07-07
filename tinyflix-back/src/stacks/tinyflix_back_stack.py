@@ -378,6 +378,13 @@ class TinyflixBackStack(Stack):
             [util_layer, service_layer, model_layer]
         )
 
+        get_feed_movies_lambda = create_lambda(
+            "getFeedMovies",
+            "get_feed_movies.lambda_handler",
+            "src/lambda/get_feed_movies",
+            [util_layer, service_layer, model_layer]
+        )
+
         movie_bucket.add_event_notification(
             s3.EventType.OBJECT_CREATED,
             s3n.LambdaDestination(transcode_movie_lambda)
