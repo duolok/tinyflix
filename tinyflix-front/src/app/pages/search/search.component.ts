@@ -7,12 +7,13 @@ import { LoginService } from '../../services/login.service';
 import { HeaderComponent } from '../../components/header/header.component';
 import { NavBarComponent } from '../../components/nav-bar/nav-bar.component';
 import { MovieCategoryComponent } from '../../components/movie-category/movie-category.component';
+import { FeedMoviesComponent } from '../../components/feed-movies/feed-movies.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [HeaderComponent, MovieCategoryComponent, NavBarComponent, FooterComponent],
+  imports: [HeaderComponent, MovieCategoryComponent, FeedMoviesComponent, NavBarComponent, FooterComponent],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss'
 })
