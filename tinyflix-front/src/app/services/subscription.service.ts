@@ -16,12 +16,13 @@ export class SubscriptionService {
     private authService: AuthService,
   ) { }
 
-  subscribe(subscriptionCriteria: any): Observable<any> {
+  subscribe(subscriptionCriteria: any, movieName: string): Observable<any> {
     return new Observable(observer => {
       this.authService.getUserId().then(email => {
         const headers = this.createAuthHeaders();
         const payload = {
           userId: email,
+          movieId: movieName,
           subscriptionCriteria: subscriptionCriteria
         };
         console.log(payload);
