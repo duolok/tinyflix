@@ -47,7 +47,7 @@ export class SubscriptionDialogComponent {
       genres: this.selectedGenres
     };
 
-    this.subscriptionService.subscribe(subscriptionCriteria).subscribe(
+    this.subscriptionService.subscribe(subscriptionCriteria, this.movie.name).subscribe(
       () => {
         this.toastrService.success('Subscribed successfully!');
         this.dialogRef.close();
