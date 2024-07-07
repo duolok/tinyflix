@@ -15,43 +15,47 @@ top_movies_table = dynamodb.Table(os.environ['TOP_MOVIES_TABLE'])
 
 def lambda_handler(event, context):
     logger.info("Received event: %s", event)
-    user_id = event['user_id']
+    for record in event['Records']:
+        if record['eventName'] == 'INSERT':
+            new_image = record['dynamodb']['NewImage']
+            user_id = new_image['userId']['S']
+            try:
+                actions = get_recent_user_actions(user_id)
+                preferences = extract_user_preferences(actions)
+                recommended_movies = generate_feed(preferences)
+                
+                logger.info("Recommended movies: %s", recommended_movies)
 
-    try:
-        actions = get_recent_user_actions(user_id)
-        preferences = extract_user_preferences(actions)
-        recommended_movies = generate_feed(preferences)
-        
-        logger.info("Recommended movies: %s", recommended_movies)
+                store_top_movies(user_id, recommended_movies)
 
-        store_top_movies(user_id, recommended_movies)
-
-
-        return create_response(200, json.dumps(recommended_movies, default=str), cors=True)
-    except Exception as e:
-        logger.error("Error processing request: %s", e)
-        return create_response(500, json.dumps({'error': str(e)}), cors=True)
+            except Exception as e:
+                logger.error("Error processing request for user %s: %s", user_id, e)
 
 def get_recent_user_actions(user_id):
-    one_week_ago = datetime.utcnow() - timedelta(days=7)
-    
-    response = user_actions_table.query(
-        KeyConditionExpression=boto3.dynamodb.conditions.Key('userId').eq(user_id) & 
-                               boto3.dynamodb.conditions.Key('timestamp').gt(one_week_ago.isoformat())
-    )
-    logger.info("User actions: %s", response['Items'])
-    return response['Items']
+    try:
+        one_week_ago = datetime.utcnow() - timedelta(days=7)
+        
+        response = user_actions_table.scan(
+            FilterExpression=boto3.dynamodb.conditions.Attr('userId').eq(user_id) & 
+                            boto3.dynamodb.conditions.Attr('timestamp').gt(one_week_ago.isoformat()),
+        )
+        logger.info("User actions for %s: %s", user_id, response['Items'])
+        return response['Items']
+    except Exception as e:
+        logger.error("Error querying user actions for %s: %s", user_id, e)
+        raise e
 
 def extract_user_preferences(actions):
     preferences = defaultdict(set)
     logger.info("Extracting user preferences from actions")
 
     for action in actions:
-        if action['action'] == 'rating':
+        action_type = action['action']
+        if action_type == 'rating':
             update_preferences_from_rating(action, preferences)
-        elif action['action'] == 'subscription':
+        elif action_type == 'subscription':
             update_preferences_from_subscription(action, preferences)
-        elif action['action'] == 'download':
+        elif action_type == 'download':
             update_preferences_from_download(action, preferences)
     
     return preferences
@@ -65,18 +69,17 @@ def update_preferences_from_rating(action, preferences):
     logger.info("Updated preferences from rating action: %s", preferences)
 
 def update_preferences_from_subscription(action, preferences):
-    criteria = action['details'].get('subscriptionCriteria', {}).get('M', {})
+    criteria = action['details'].get('subscriptionCriteria', {})
     
-    genres = [item['S'] for item in criteria.get('genres', {}).get('L', [])]
-    actors = [item['S'] for item in criteria.get('actors', {}).get('L', [])]
-    directors = [item['S'] for item in criteria.get('directors', {}).get('L', [])]
+    genres = [item for item in criteria.get('genres', [])]
+    actors = [item for item in criteria.get('actors', [])]
+    directors = [item for item in criteria.get('directors', [])]
 
     preferences['genres'].update(genres)
     preferences['actors'].update(actors)
     preferences['directors'].update(directors)
 
     logger.info("Updated preferences from subscription action: %s", preferences)
-
 
 def update_preferences_from_download(action, preferences):
     movie_id = action['movieId']
@@ -133,11 +136,22 @@ def sort_movies_by_score(movie_scores):
 def store_top_movies(user_id, movies):
     top_movies = movies[:5]
     top_movies_data = {
-        'userId': user_id,
         'movies': top_movies,
         'timestamp': datetime.utcnow().isoformat()
     }
-    top_movies_table.put_item(Item=top_movies_data)
+    
+    top_movies_table.update_item(
+        Key={'userId': user_id},
+        UpdateExpression="SET #movies = :movies, #timestamp = :timestamp",
+        ExpressionAttributeNames={
+            '#movies': 'movies',
+            '#timestamp': 'timestamp'
+        },
+        ExpressionAttributeValues={
+            ':movies': top_movies_data['movies'],
+            ':timestamp': top_movies_data['timestamp']
+        }
+    )
 
 def create_response(status_code, body, cors=False):
     response = {
@@ -153,3 +167,4 @@ def create_response(status_code, body, cors=False):
     if cors:
         response['headers']['Access-Control-Allow-Origin'] = '*'
     return response
+
