@@ -1,3 +1,5 @@
+from uuid import uuid1
+from datetime import datetime
 import json
 import boto3
 import os
@@ -6,6 +8,7 @@ from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ['SUBSCRIPTIONS_TABLE'])
+user_actions_table = dynamodb.Table(os.environ['USER_ACTIONS_TABLE'])
 sns = boto3.client('sns')
 
 logger = logging.getLogger()
@@ -19,6 +22,7 @@ def lambda_handler(event, context):
         user_id = body['userId']
         new_subscriptions = body['subscriptionCriteria']
         email = body['userId']  
+        movieId = body['movieId']
         
         logger.info("Processing subscriptions for user: %s", user_id)
         
@@ -54,6 +58,9 @@ def lambda_handler(event, context):
         subscribe_to_sns_topic(email, os.environ['NOTIFICATION_TOPIC_ARN'])
         
         logger.info("Successfully updated subscriptions for user: %s", user_id)
+
+
+        log_user_action(user_id, 'subscription', movieId, {'subscriptionCriteria': new_subscriptions})
         return create_response(200, json.dumps('Subscription added successfully!'), cors=True)
     
     except ClientError as e:
@@ -83,6 +90,18 @@ def subscribe_to_sns_topic(email, topic_arn):
     except ClientError as e:
         logger.error(f"Error subscribing {email} to topic {topic_arn}: {e.response['Error']['Message']}")
         raise e
+
+def log_user_action(user_id, action, movie_id, details):
+    user_actions_table.put_item(
+        Item={
+            'id': str(uuid1()),
+            'userId': user_id,
+            'timestamp': datetime.utcnow().isoformat(),
+            'action': action,
+            'movieId': movie_id,
+            'details': details
+        }
+    )
 
 def create_response(status_code, body, cors=False):
     response = {
