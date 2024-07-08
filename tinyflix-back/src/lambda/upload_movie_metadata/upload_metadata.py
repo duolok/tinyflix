@@ -26,8 +26,8 @@ def lambda_handler(event, context):
             'actors': '|'.join(body['actors']) if isinstance(body['genres'], list) else body['actors'],
             'directors': '|'.join(body['directors']) if isinstance(body['directors'], list) else body['directors'],  
             'genres': '|'.join(body['genres']) if isinstance(body['genres'], list) else body['genres'],
-            'movieFilePath': body['movieFilePath'],
-            'imageFilePath': body['imageFilePath'],
+            'movieFilePath': add_original_suffix(body['movieFilePath']),
+            'imageFilePath': add_original_suffix(body['imageFilePath']),
             'movieFileType': body['movieType'],
             'movieFileSize': str(body['movieSize']),
             'movieFileCreationTime': body['movieCreationTime'],
@@ -46,6 +46,11 @@ def lambda_handler(event, context):
     except Exception as e:
         print("Exception: ", str(e))
         return create_response(500, json.dumps({'error': str(e)}), cors=True)
+
+def add_original_suffix(file_path):
+    base_name, ext = os.path.splitext(file_path)
+    return f"{base_name}_original{ext}"
+
 def create_response(status_code, body, cors=False):
     response = {
         'statusCode': status_code,
