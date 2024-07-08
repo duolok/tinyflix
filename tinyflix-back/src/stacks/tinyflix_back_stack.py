@@ -14,6 +14,7 @@ from aws_cdk import (
     aws_lambda_event_sources as lambda_event_sources,
     aws_sqs as sqs,
     aws_apigateway as apigateway,
+    aws_cognito as cognito,
 )
 from aws_cdk.aws_lambda_python_alpha import PythonLayerVersion
 
@@ -21,6 +22,39 @@ class TinyflixBackStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
+        user_pool = cognito.UserPool(
+            self, "TinyflixUserPool",
+            user_pool_name="tinyflix-cognito",
+            self_sign_up_enabled=True,
+            auto_verify=cognito.AutoVerifiedAttrs(email=True),
+            password_policy=cognito.PasswordPolicy(
+                min_length=8,
+                require_digits=True,
+                require_lowercase=True,
+                require_uppercase=True,
+                require_symbols=False
+            ),
+            sign_in_aliases=cognito.SignInAliases(email=True),
+            standard_attributes=cognito.StandardAttributes(
+                email=cognito.StandardAttribute(required=True, mutable=True)
+            ),
+            custom_attributes={
+                "role": cognito.StringAttribute(min_len=1, max_len=2048, mutable=True)
+            },
+        )
+  
+        admin_group = cognito.CfnUserPoolGroup(
+            self, "AdminGroup",
+            user_pool_id=user_pool.user_pool_id,
+            group_name="Admins",
+            )
+        
+        user_group = cognito.CfnUserPoolGroup(
+            self, "UserGroup",
+            user_pool_id=user_pool.user_pool_id,
+            group_name="Users",
+            )
 
         movies_table = dynamodb.Table(
             self, "MoviesTable",
@@ -592,4 +626,5 @@ class TinyflixBackStack(Stack):
         core.CfnOutput(self, "MovieBucketName", value=movie_bucket.bucket_name)
         core.CfnOutput(self, "NotificationTopicArn", value=notification_topic.topic_arn)
         core.CfnOutput(self, "ApiGatewayUrl", value=api.url)
-
+        core.CfnOutput(self, "UserPoolId", value=user_pool.user_pool_id)
+        core.CfnOutput(self, "UserPoolArn", value=user_pool.user_pool_arn)
