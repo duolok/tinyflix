@@ -63,7 +63,7 @@ export class AuthService {
         name: user.firstName,
         family_name: user.lastName,
         nickname: user.username,
-        'custom:role': user.role
+        'custom:role': 'User',
       }
     }).then(result => {
       console.log("Sign Up Success: ", result);
@@ -103,4 +103,26 @@ export class AuthService {
   public getUserId(): Promise<string> {
     return this.getCurrentUser().then(user => user.attributes.email);
   }
+
+  public getUserRole(): Promise<string> {
+    return this.getCurrentUser().then(user => user.attributes['custom:role'])
+      .catch(error => {
+        console.error('Error getting user role:', error);
+        throw error;
+      });
+  }
+
+  public setUserRole(): Promise<string> {
+    return this.getCurrentUser().then(user => {
+      const role = user.attributes['custom:role'];
+      localStorage.setItem('userRole', role); 
+      return role;
+    })
+      .catch(error => {
+        console.error('Error getting user role:', error);
+        throw error;
+      });
+  }
+
+
 }
