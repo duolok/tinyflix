@@ -13,7 +13,9 @@ def lambda_handler(event, context):
         upload_urls = []
 
         for file_name in files:
-            key = f'movies/{title}/{file_name}'
+            base_name, ext = os.path.splitext(file_name)
+            original_file_name = f"{base_name}_original{ext}"
+            key = f'movies/{title}/{original_file_name}'
             presigned_url = s3_client.generate_presigned_url(
                 'put_object',
                 Params={'Bucket': bucket_name, 'Key': key},
@@ -36,7 +38,5 @@ def create_response(status_code, body, cors=False):
             'Access-Control-Allow-Methods': '*',
         }
     }
-    if cors:
-        response['headers']['Access-Control-Allow-Origin'] = '*'
     return response
 
