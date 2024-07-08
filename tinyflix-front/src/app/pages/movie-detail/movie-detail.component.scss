@@ -157,3 +157,82 @@ $transition-time: 0.3s;
   }
 }
 
+.resolution-switcher {
+  width: 40em;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  h1 {
+    text-align: center;
+    font-family: bayon;
+    letter-spacing: 1px;
+    font-weight: regular;
+    margin: 0;
+    font-size: 2em;
+    color: white;
+    display: inline-block;
+    margin-left: 2em;
+    margin-right: 2em;
+    margin-top: 0.5em;
+    text-shadow:
+    0 0 10px #83c5be,
+    0 0 20px #006d77;
+    z-index: 9999;
+
+  }
+}
+
+select {
+  width: 100%;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #ccc;
+  font-size: 1.2em;
+  appearance: none; 
+}
+
+select option {
+  background-color: #1a1a1a;
+  color: #ccc;
+}
+
+select:focus {
+  outline: none;
+  border-color: #666666;
+}
+
+.select-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.select-container::after {
+  content: '\25BC'; 
+  position: absolute;
+  right: 1em;
+  color: #ccc;
+  pointer-events: none;
+}
+
+label {
+  color: #ccc;
+  display: block;
+  margin-bottom: 1em;
+}
+
+input, select {
+  width: 100%;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #ccc;
+}
