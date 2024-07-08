@@ -10,9 +10,9 @@
         <button (click)="playMovie()">{{ isPlaying ? "Pause" : "Play" }}</button>
         <button (click)="downloadMovie()">Download</button>
         <button (click)="addSubscription()">Subscribe</button>
-        <button (click)="updateMovie()">Update</button>
+        <button *ngIf="isAdmin" (click)="updateMovie()">Update</button>
         <button (click)="rateMovie()">Rate</button>
-        <button (click)="$event.preventDefault();deleteMovie()">Delete</button>
+        <button *ngIf="isAdmin" (click)="$event.preventDefault();deleteMovie()">Delete</button>
         <div class="resolution-switcher">
           <br><br>
           <h1>Resolution</h1>

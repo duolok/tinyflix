@@ -15,6 +15,8 @@ import { RoundTwoDecimalsPipe } from '../../pipes/round-two-decimals.pipe';
 import { PeopleFormatPipe } from '../../pipes/people-format.pipe';
 import { RatingDialogComponent } from '../../components/rating-dialog/rating-dialog.component';
 import { SubscriptionDialogComponent } from '../../components/subscription-dialog/subscription-dialog.component';
+import { AuthService } from "../../services/auth.service";
+import { RoleService } from "../../services/role.service";
 import { FormsModule } from '@angular/forms'; 
 
 @Component({
@@ -32,13 +34,16 @@ export class MovieDetailComponent implements OnInit {
   isPlaying: boolean = false;
   showConfirmDialog = false;
   selectedResolution: string = "original";
+  isAdmin: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private movieService: MovieService,
     private toastrService: ToastrService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService,
+    private roleService: RoleService
   ) {}
 
   ngOnInit(): void {
@@ -54,6 +59,12 @@ export class MovieDetailComponent implements OnInit {
         }
       );
     }
+
+    this.authService.getUserRole().then(() => {
+      this.isAdmin = this.roleService.isAdmin();
+    }).catch(error => {
+        console.error('Error fetching user role:', error);
+      });
   }
 
   playMovie(): void {
