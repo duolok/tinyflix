@@ -13,6 +13,16 @@
         <button (click)="updateMovie()">Update</button>
         <button (click)="rateMovie()">Rate</button>
         <button (click)="$event.preventDefault();deleteMovie()">Delete</button>
+        <div class="resolution-switcher">
+          <br><br>
+          <h1>Resolution</h1>
+          <select [(ngModel)]="selectedResolution" (change)="switchResolution()">
+            <option value="original">Original</option>
+            <option value="360p">360p</option>
+            <option value="480p">480p</option>
+            <option value="720p">720p</option>
+          </select>
+        </div>
       </div>
     </div>
     <div class="movie-info">
@@ -27,10 +37,9 @@
         <p><strong>Director: </strong>   {{ movie.directors | peopleFormat }}</p>
         <p><strong>Cast: </strong>   {{ movie.actors | peopleFormat}}</p>
         <p><strong>Genres: </strong>   {{ movie.genres | peopleFormat }}</p>
-        <p><strong>Relese Date: </strong>   {{ movie.releaseDate | dateFormat }}</p>
+        <p><strong>Release Date: </strong>   {{ movie.releaseDate | dateFormat }}</p>
         <p><strong>Duration: </strong>   {{ movie.duration }}min</p>
       </div>
     </div>
   </div>
 </div>
-
