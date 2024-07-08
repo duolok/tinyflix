@@ -12,6 +12,8 @@ from aws_cdk import (
     aws_sns as sns,
     aws_s3_notifications as s3n,
     aws_lambda_event_sources as lambda_event_sources,
+    aws_sqs as sqs,
+    aws_apigateway as apigateway,
 )
 from aws_cdk.aws_lambda_python_alpha import PythonLayerVersion
 
@@ -227,7 +229,15 @@ class TinyflixBackStack(Stack):
             compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
         )
 
-        def create_lambda(id, handler, include_dir, layers):
+
+        upload_metadata_queue = sqs.Queue(self, "UploadMetadataQueue", queue_name="upload-metadata-queue")
+        upload_file_queue = sqs.Queue(self, "UploadFileQueue", queue_name="upload-file-queue")
+        delete_metadata_queue = sqs.Queue(self, "DeleteMetadataQueue", queue_name="delete-metadata-queue")
+        delete_file_queue = sqs.Queue(self, "DeleteFileQueue", queue_name="delete-file-queue")
+        download_file_queue = sqs.Queue(self, "DownloadFileQueue", queue_name="download-file-queue")
+
+
+        def create_lambda(id, handler, include_dir, layers, queue=None):
             print(f"Creating Lambda function with id: {id}, handler: {handler}, directory: {include_dir}")
             function = _lambda.Function(
                 self, id,
@@ -258,6 +268,9 @@ class TinyflixBackStack(Stack):
                 role=lambda_role,
                 log_retention=logs.RetentionDays.ONE_WEEK
             )
+            if queue:
+                function.add_event_source(lambda_event_sources.SqsEventSource(queue))
+
             fn_url = function.add_function_url(
                 auth_type=_lambda.FunctionUrlAuthType.NONE,
                 cors=_lambda.FunctionUrlCorsOptions(
@@ -305,26 +318,28 @@ class TinyflixBackStack(Stack):
             )
             return function
 
-
         upload_metadata_lambda = create_lambda(
             "uploadMovieMetadata",
             "upload_metadata.lambda_handler",
             "src/lambda/upload_movie_metadata",
-            [util_layer, service_layer, model_layer]
+            [util_layer, service_layer, model_layer],
+            upload_metadata_queue
         )
 
         upload_file_lambda = create_lambda(
             "uploadMovieFile",
             "upload_file.lambda_handler",
             "src/lambda/upload_movie_file",
-            [util_layer, service_layer, model_layer]
+            [util_layer, service_layer, model_layer],
+            upload_file_queue
         )
 
         download_file_lambda = create_lambda(
             "downloadMovieFile",
             "download_file.lambda_handler",
             "src/lambda/download_movie_file",
-            [util_layer, service_layer, model_layer]
+            [util_layer, service_layer, model_layer],
+            download_file_queue
         )
 
         get_movies_lambda = create_lambda(
@@ -345,16 +360,17 @@ class TinyflixBackStack(Stack):
             "deleteMovieMetadata",
             "delete_metadata.lambda_handler",
             "src/lambda/delete_movie_metadata",
-            [util_layer, service_layer, model_layer]
+            [util_layer, service_layer, model_layer],
+            delete_metadata_queue
         )
 
         delete_file_lambda = create_lambda(
             "deleteMovieFile",
             "delete_file.lambda_handler",
             "src/lambda/delete_movie_file",
-            [util_layer, service_layer, model_layer]
+            [util_layer, service_layer, model_layer],
+            delete_file_queue
         )
-
         search_movies_lambda = create_lambda(
             "searchAllMovies",
             "search_movies.lambda_handler",
@@ -448,7 +464,57 @@ class TinyflixBackStack(Stack):
             )
         )
 
+        api = apigateway.RestApi(self, "tinygateway", rest_api_name="Tinyflix Gateway", description="This service serves the Tinyflix application.")
+
+        content_management = api.root.add_resource("content-management")
+        movies = api.root.add_resource("movies")
+
+        content_management.add_method("PUT", apigateway.LambdaIntegration(subscribe_content_lambda))
+
+        unsubscribe = content_management.add_resource("unsubscribe")
+        unsubscribe.add_method("POST", apigateway.LambdaIntegration(unsubscribe_content_lambda))
+
+        get_subscriptions = content_management.add_resource("get_subscriptions")
+        get_subscriptions.add_method("GET", apigateway.LambdaIntegration(get_subscriptions_lambda))
+
+        get_feed = content_management.add_resource("get-feed")
+        get_feed.add_method("GET", apigateway.LambdaIntegration(get_feed_movies_lambda))
+
+        upload_metadata = movies.add_resource("upload-movie-metadata")
+        upload_metadata.add_method("POST", apigateway.LambdaIntegration(upload_metadata_lambda))
+
+        upload_file = movies.add_resource("upload-movie-file")
+        upload_file.add_method("PUT", apigateway.LambdaIntegration(upload_file_lambda))
+
+        delete_metadata = movies.add_resource("delete-movie-metadata")
+        delete_metadata.add_method("DELETE", apigateway.LambdaIntegration(delete_metadata_lambda))
+
+        delete_file = movies.add_resource("delete-movie-file")
+        delete_file.add_method("DELETE", apigateway.LambdaIntegration(delete_file_lambda))
+
+        download_file = movies.add_resource("download-movie-file")
+        download_file.add_method("GET", apigateway.LambdaIntegration(download_file_lambda))
+
+        get_movies = movies.add_resource("get-all-movies")
+        get_movies.add_method("GET", apigateway.LambdaIntegration(get_movies_lambda))
+
+        get_movie = movies.add_resource("get-movie")
+        get_movie.add_method("GET", apigateway.LambdaIntegration(get_movie_lambda))
+
+        rate_movie = movies.add_resource("rate-movie")
+        rate_movie.add_method("PATCH", apigateway.LambdaIntegration(rate_movie_lambda))
+
+        search_movies = movies.add_resource("search")
+        search_movies.add_method("GET", apigateway.LambdaIntegration(search_movies_lambda))
+
+        update_movie = movies.add_resource("update-movie")
+        update_movie.add_method("PATCH", apigateway.LambdaIntegration(update_movie_lambda))
+
+
+
+
+
+
         core.CfnOutput(self, "MovieBucketName", value=movie_bucket.bucket_name)
         core.CfnOutput(self, "NotificationTopicArn", value=notification_topic.topic_arn)
-
-
+        core.CfnOutput(self, "ApiGatewayUrl", value=api.url)
