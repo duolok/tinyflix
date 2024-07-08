@@ -1,0 +1,42 @@
+.not-found-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+}
+
+.message {
+  margin-bottom: 20px;
+}
+
+.error-code {
+  font-size: 2em;
+  margin: 20px 0;
+}
+
+.return-button {
+  background-color: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.return-button:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.astronaut {
+  margin-top: 20px;
+}
+
+.astronaut img {
+  width: 200px;
+  height: auto;
+}
