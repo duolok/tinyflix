@@ -24,19 +24,23 @@ export class MovieService {
   }
 
   getMovies(): Observable<any[]> {
-    return this.httpClient.get<{ body: string }>(`${this.apiUrl}/movies/get-all-movies`).pipe(
+    return this.httpClient.get<any>(`${this.apiUrl}/movies/get-all-movies`).pipe(
       map(response => {
-        const parsedBody = JSON.parse(response.body);
-        const movies = parsedBody.data;
-        return movies.map((movie: any) => ({
-          ...movie,
-          imageFilePath: `${this.s3BucketUrl}/${movie.imageFilePath}`,
-          movieFilePath: `${this.s3BucketUrl}/${movie.movieFilePath}`
-        }));
+        console.log('Full response:', response); 
+        if (response && response.data) {
+          const movies = response.data;
+          return movies.map((movie: any) => ({
+            ...movie,
+            imageFilePath: `${this.s3BucketUrl}/${movie.imageFilePath}`,
+            movieFilePath: `${this.s3BucketUrl}/${movie.movieFilePath}`
+          }));
+        } else {
+          throw new Error('Response data is undefined.');
+        }
       }),
       catchError(error => {
         console.error('Error fetching movies.', error);
-        return throwError(error);
+        return throwError('Error fetching movies: ' + (error.message || error));
       })
     );
   }
