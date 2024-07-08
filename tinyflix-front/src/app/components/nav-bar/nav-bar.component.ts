@@ -3,6 +3,8 @@ import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { LoginService } from "../../services/login.service";
+import { AuthService } from "../../services/auth.service";
+import { RoleService } from "../../services/role.service";
 
 @Component({
   selector: "app-nav-bar",
@@ -12,15 +14,20 @@ import { LoginService } from "../../services/login.service";
   styleUrl: "./nav-bar.component.scss",
 })
 export class NavBarComponent {
-  public role: string = "admin";
+  isAdmin: boolean = false;
 
-  constructor(public router: Router) {}
+  constructor(public router: Router, private authService: AuthService, private roleService: RoleService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.authService.getUserRole().then(() => {
+      this.isAdmin = this.roleService.isAdmin();
+    }).catch(error => {
+        console.error('Error fetching user role:', error);
+      });
+  }
 
   onLogoutClick(): void {
     localStorage.clear();
-    this.router.navigate(["/"]);
+    this.router.navigate(["/login"]);
   }
-
 }

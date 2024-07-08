@@ -4,7 +4,7 @@
     <a routerLink="home" href="home" ><i class="cil-home"></i ></a>
     <a routerLink="search" href="search"><i class="cil-search"></i></a>
     <a routerLink="subscriptions" href="subscriptions"><i class="cil-bookmark"></i></a>
-    <a routerLink="movie-upload" href="movie-upload"
+    <a *ngIf="isAdmin" routerLink="movie-upload" href="movie-upload"
       ><i class="cil-plus"></i
     ></a>
     <button class="logout-button" (click)="onLogoutClick()">Logout</button>
