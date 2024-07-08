@@ -15,11 +15,12 @@ import { RoundTwoDecimalsPipe } from '../../pipes/round-two-decimals.pipe';
 import { PeopleFormatPipe } from '../../pipes/people-format.pipe';
 import { RatingDialogComponent } from '../../components/rating-dialog/rating-dialog.component';
 import { SubscriptionDialogComponent } from '../../components/subscription-dialog/subscription-dialog.component';
+import { FormsModule } from '@angular/forms'; 
 
 @Component({
   selector: "app-movie-detail",
   standalone: true,
-  imports: [CommonModule, NavBarComponent, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatFormFieldModule, DateFormatPipe, RoundTwoDecimalsPipe, PeopleFormatPipe],
+  imports: [CommonModule, FormsModule, NavBarComponent, MatDatepickerModule, MatNativeDateModule, MatInputModule, MatFormFieldModule, DateFormatPipe, RoundTwoDecimalsPipe, PeopleFormatPipe],
   providers: [DatePipe, RoundTwoDecimalsPipe],
   templateUrl: "./movie-detail.component.html",
   styleUrls: ["./movie-detail.component.scss"],
@@ -30,6 +31,7 @@ export class MovieDetailComponent implements OnInit {
   role: string = "user";
   isPlaying: boolean = false;
   showConfirmDialog = false;
+  selectedResolution: string = "original";
 
   constructor(
     private route: ActivatedRoute,
@@ -162,6 +164,27 @@ export class MovieDetailComponent implements OnInit {
           }
         );
       }
-    });}
+    });
+  }
+
+  switchResolution(): void {
+    const baseFilePath = this.movie.movieFilePath.replace(/_original\.mp4|_360p\.mp4|_480p\.mp4|_720p\.mp4/, '');
+    switch (this.selectedResolution) {
+      case '360p':
+        this.movie.movieFilePath = `${baseFilePath}_360p.mp4`;
+        break;
+      case '480p':
+        this.movie.movieFilePath = `${baseFilePath}_480p.mp4`;
+        break;
+      case '720p':
+        this.movie.movieFilePath = `${baseFilePath}_720p.mp4`;
+        break;
+      default:
+        this.movie.movieFilePath = `${baseFilePath}_original.mp4`;
+        break;
+    }
+    const video: HTMLVideoElement = this.videoPlayer.nativeElement;
+    video.load(); 
+  }
 }
 
