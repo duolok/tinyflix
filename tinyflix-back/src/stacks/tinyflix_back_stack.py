@@ -265,6 +265,46 @@ class TinyflixBackStack(Stack):
                 )
             )
             return function
+        
+        def create_transcode_lambda(id, handler, include_dir, layers):
+            print(f"Creating Lambda function with id: {id}, handler: {handler}, directory: {include_dir}")
+            function = _lambda.Function(
+                self, id,
+                runtime=_lambda.Runtime.PYTHON_3_9,
+                layers=layers,
+                handler=handler,
+                code=_lambda.Code.from_asset(
+                    include_dir,
+                    bundling=BundlingOptions(
+                        image=_lambda.Runtime.PYTHON_3_9.bundling_image,
+                        command=[
+                            "bash", "-c",
+                            "pip install --no-cache -r requirements.txt -t /asset-output && cp -r . /asset-output"
+                        ],
+                    ),
+                ),
+                memory_size=1024,
+                timeout=Duration.seconds(300),
+                environment={
+                    'MOVIE_TABLE': movies_table.table_name,
+                    'SUBSCRIPTIONS_TABLE': subscriptions_table.table_name,
+                    'RATINGS_TABLE': ratings_table.table_name,
+                    'USER_ACTIONS_TABLE': user_actions_table.table_name,
+                    'TOP_MOVIES_TABLE': top_movies_table.table_name,
+                    'MOVIE_BUCKET': movie_bucket.bucket_name,
+                    'NOTIFICATION_TOPIC_ARN': notification_topic.topic_arn
+                },
+                role=lambda_role,
+                log_retention=logs.RetentionDays.ONE_WEEK
+            )
+            fn_url = function.add_function_url(
+                auth_type=_lambda.FunctionUrlAuthType.NONE,
+                cors=_lambda.FunctionUrlCorsOptions(
+                    allowed_origins=["*"]
+                )
+            )
+            return function
+
 
         upload_metadata_lambda = create_lambda(
             "uploadMovieMetadata",
@@ -357,7 +397,7 @@ class TinyflixBackStack(Stack):
             [util_layer, service_layer, model_layer]
         )
 
-        transcode_movie_lambda = create_lambda(
+        transcode_movie_lambda = create_transcode_lambda(
             "transcodeMovie",
             "transcode.lambda_handler",
             "src/lambda/transcode_movie",
