@@ -35,17 +35,24 @@ export class LoginComponent {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  onSubmit() {
+    onSubmit() {
     console.log(this.user);
     this.loading = true;
     this.authService.signIn(this.user).then((res) => {
+      this.authService.getUserRole().then((role) => {
+        localStorage.setItem('userRole', role); 
+        localStorage.setItem('token', res.signInUserSession.idToken.jwtToken); 
         this.router.navigateByUrl('/home');
         this.toastrService.success("Logged in successfully.");
-        localStorage.setItem('token', res.signInUserSession.idToken.jwtToken)
       }).catch((err) => {
         this.loading = false;
-        this.toastrService.error("Incorrect username or password.");
-      })
+        this.toastrService.error("Failed to fetch user role.");
+        console.error('Error fetching user role:', err);
+      });
+    }).catch((err) => {
+      this.loading = false;
+      this.toastrService.error("Incorrect username or password.");
+    });
   }
 
   openSignUp() {
