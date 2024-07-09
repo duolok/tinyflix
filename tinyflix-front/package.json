@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "aws:deploy": "aws s3 sync dist/tinyflix/ s3://tinyflix-deployment"
   },
   "private": true,
   "dependencies": {
