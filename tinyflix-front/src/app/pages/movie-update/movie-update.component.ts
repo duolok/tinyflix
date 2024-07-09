@@ -186,7 +186,7 @@ export class MovieUpdateComponent implements OnInit {
         directors: this.directors.join('|'),
         genres: (this.updateForm.get('genres')?.value || []).join('|'),
         movieFilePath: this.movie.movieFilePath.split('.com/')[1], 
-        imageFilePath: this.movie.imageFilePath.split('.com/')[1], // Retain the current image path
+        imageFilePath: this.movie.imageFilePath.split('.com/')[1], 
       };
 
       if (this.movieFile) {
