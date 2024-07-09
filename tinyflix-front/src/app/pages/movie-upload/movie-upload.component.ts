@@ -62,8 +62,7 @@ export class MovieUploadComponent {
   }
 
   addActor(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value) {
+    const value = (event.value || '').trim(); if (value) {
       this.actors.push(value);
     }
     event.chipInput!.clear();
