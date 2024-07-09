@@ -178,22 +178,30 @@ export class MovieDetailComponent implements OnInit {
     });
   }
 
+
   switchResolution(): void {
-    const baseFilePath = this.movie.movieFilePath.replace(/_original\.mp4|_360p\.mp4|_480p\.mp4|_720p\.mp4/, '');
+    const url = new URL(this.movie.movieFilePath);
+    const baseFilePath = url.href.replace(/(_original|_360p|_480p|_720p)\.mp4$/, '');
+
+    let newFilePath: string;
     switch (this.selectedResolution) {
       case '360p':
-        this.movie.movieFilePath = `${baseFilePath}_360p.mp4`;
+        newFilePath = `${baseFilePath}_360p.mp4`;
         break;
       case '480p':
-        this.movie.movieFilePath = `${baseFilePath}_480p.mp4`;
+        newFilePath = `${baseFilePath}_480p.mp4`;
         break;
       case '720p':
-        this.movie.movieFilePath = `${baseFilePath}_720p.mp4`;
+        newFilePath = `${baseFilePath}_720p.mp4`;
         break;
       default:
-        this.movie.movieFilePath = `${baseFilePath}_original.mp4`;
+        newFilePath = `${baseFilePath}_original.mp4`;
         break;
     }
+
+    this.movie.movieFilePath = newFilePath;
+    console.log(`Updated movie file path: ${this.movie.movieFilePath}`);
+
     const video: HTMLVideoElement = this.videoPlayer.nativeElement;
     video.load(); 
   }
