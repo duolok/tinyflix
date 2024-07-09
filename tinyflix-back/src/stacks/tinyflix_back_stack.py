@@ -12,9 +12,6 @@ from aws_cdk import (
     aws_sns as sns,
     aws_s3_notifications as s3n,
     aws_lambda_event_sources as lambda_event_sources,
-    aws_sqs as sqs,
-    aws_apigateway as apigateway,
-    aws_cognito as cognito,
 )
 from aws_cdk.aws_lambda_python_alpha import PythonLayerVersion
 
@@ -22,39 +19,6 @@ class TinyflixBackStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
-
-        user_pool = cognito.UserPool(
-            self, "TinyflixUserPool",
-            user_pool_name="tinyflix-cognito",
-            self_sign_up_enabled=True,
-            auto_verify=cognito.AutoVerifiedAttrs(email=True),
-            password_policy=cognito.PasswordPolicy(
-                min_length=8,
-                require_digits=True,
-                require_lowercase=True,
-                require_uppercase=True,
-                require_symbols=False
-            ),
-            sign_in_aliases=cognito.SignInAliases(email=True),
-            standard_attributes=cognito.StandardAttributes(
-                email=cognito.StandardAttribute(required=True, mutable=True)
-            ),
-            custom_attributes={
-                "role": cognito.StringAttribute(min_len=1, max_len=2048, mutable=True)
-            },
-        )
-  
-        admin_group = cognito.CfnUserPoolGroup(
-            self, "AdminGroup",
-            user_pool_id=user_pool.user_pool_id,
-            group_name="Admins",
-            )
-        
-        user_group = cognito.CfnUserPoolGroup(
-            self, "UserGroup",
-            user_pool_id=user_pool.user_pool_id,
-            group_name="Users",
-            )
 
         movies_table = dynamodb.Table(
             self, "MoviesTable",
@@ -263,13 +227,8 @@ class TinyflixBackStack(Stack):
             compatible_runtimes=[_lambda.Runtime.PYTHON_3_9]
         )
 
-        upload_metadata_queue = sqs.Queue(self, "UploadMetadataQueue", queue_name="upload-metadata-queue")
-        upload_file_queue = sqs.Queue(self, "UploadFileQueue", queue_name="upload-file-queue")
-        delete_metadata_queue = sqs.Queue(self, "DeleteMetadataQueue", queue_name="delete-metadata-queue")
-        delete_file_queue = sqs.Queue(self, "DeleteFileQueue", queue_name="delete-file-queue")
-        download_file_queue = sqs.Queue(self, "DownloadFileQueue", queue_name="download-file-queue")
-
-        def create_lambda(id, handler, include_dir, layers, queue=None):
+        def create_lambda(id, handler, include_dir, layers):
+            print(f"Creating Lambda function with id: {id}, handler: {handler}, directory: {include_dir}")
             function = _lambda.Function(
                 self, id,
                 runtime=_lambda.Runtime.PYTHON_3_9,
@@ -299,11 +258,16 @@ class TinyflixBackStack(Stack):
                 role=lambda_role,
                 log_retention=logs.RetentionDays.ONE_WEEK
             )
-            if queue:
-                function.add_event_source(lambda_event_sources.SqsEventSource(queue))
+            fn_url = function.add_function_url(
+                auth_type=_lambda.FunctionUrlAuthType.NONE,
+                cors=_lambda.FunctionUrlCorsOptions(
+                    allowed_origins=["*"]
+                )
+            )
             return function
-
+        
         def create_transcode_lambda(id, handler, include_dir, layers):
+            print(f"Creating Lambda function with id: {id}, handler: {handler}, directory: {include_dir}")
             function = _lambda.Function(
                 self, id,
                 runtime=_lambda.Runtime.PYTHON_3_9,
@@ -333,30 +297,34 @@ class TinyflixBackStack(Stack):
                 role=lambda_role,
                 log_retention=logs.RetentionDays.ONE_WEEK
             )
+            fn_url = function.add_function_url(
+                auth_type=_lambda.FunctionUrlAuthType.NONE,
+                cors=_lambda.FunctionUrlCorsOptions(
+                    allowed_origins=["*"]
+                )
+            )
             return function
+
 
         upload_metadata_lambda = create_lambda(
             "uploadMovieMetadata",
             "upload_metadata.lambda_handler",
             "src/lambda/upload_movie_metadata",
-            [util_layer, service_layer, model_layer],
-            upload_metadata_queue
+            [util_layer, service_layer, model_layer]
         )
 
         upload_file_lambda = create_lambda(
             "uploadMovieFile",
             "upload_file.lambda_handler",
             "src/lambda/upload_movie_file",
-            [util_layer, service_layer, model_layer],
-            upload_file_queue
+            [util_layer, service_layer, model_layer]
         )
 
         download_file_lambda = create_lambda(
             "downloadMovieFile",
             "download_file.lambda_handler",
             "src/lambda/download_movie_file",
-            [util_layer, service_layer, model_layer],
-            download_file_queue
+            [util_layer, service_layer, model_layer]
         )
 
         get_movies_lambda = create_lambda(
@@ -377,16 +345,14 @@ class TinyflixBackStack(Stack):
             "deleteMovieMetadata",
             "delete_metadata.lambda_handler",
             "src/lambda/delete_movie_metadata",
-            [util_layer, service_layer, model_layer],
-            delete_metadata_queue
+            [util_layer, service_layer, model_layer]
         )
 
         delete_file_lambda = create_lambda(
             "deleteMovieFile",
             "delete_file.lambda_handler",
             "src/lambda/delete_movie_file",
-            [util_layer, service_layer, model_layer],
-            delete_file_queue
+            [util_layer, service_layer, model_layer]
         )
 
         search_movies_lambda = create_lambda(
@@ -482,149 +448,5 @@ class TinyflixBackStack(Stack):
             )
         )
 
-        api = apigateway.RestApi(self, "tinygateway", rest_api_name="Tinyflix Gateway", description="This service serves the Tinyflix application.")
-
-        content_management = api.root.add_resource("content-management")
-        movies = api.root.add_resource("movies")
-
-        content_management.add_method("PUT", apigateway.LambdaIntegration(subscribe_content_lambda))
-
-        unsubscribe = content_management.add_resource("unsubscribe")
-        unsubscribe.add_method("POST", apigateway.LambdaIntegration(unsubscribe_content_lambda))
-
-        get_subscriptions = content_management.add_resource("get_subscriptions")
-        get_subscriptions.add_method("GET", apigateway.LambdaIntegration(get_subscriptions_lambda))
-
-        get_feed = content_management.add_resource("get-feed")
-        get_feed.add_method("GET", apigateway.LambdaIntegration(get_feed_movies_lambda))
-
-        upload_metadata = movies.add_resource("upload-movie-metadata")
-        upload_metadata.add_method("POST", apigateway.AwsIntegration(
-            service="sqs",
-            path=f"{core.Aws.ACCOUNT_ID}/{upload_metadata_queue.queue_name}",
-            integration_http_method="POST",
-            options=apigateway.IntegrationOptions(
-                credentials_role=lambda_role,
-                request_parameters={
-                    "integration.request.header.Content-Type": "'application/x-www-form-urlencoded'"
-                },
-                request_templates={
-                    "application/json": "Action=SendMessage&MessageBody=$util.urlEncode($input.body)"
-                },
-                integration_responses=[{
-                    "statusCode": "200",
-                    "responseTemplates": {
-                        "application/json": '{"done": true}'
-                    }
-                }]
-            )
-        ))
-
-        upload_file = movies.add_resource("upload-movie-file")
-        upload_file.add_method("PUT", apigateway.AwsIntegration(
-            service="sqs",
-            path=f"{core.Aws.ACCOUNT_ID}/{upload_file_queue.queue_name}",
-            integration_http_method="POST",
-            options=apigateway.IntegrationOptions(
-                credentials_role=lambda_role,
-                request_parameters={
-                    "integration.request.header.Content-Type": "'application/x-www-form-urlencoded'"
-                },
-                request_templates={
-                    "application/json": "Action=SendMessage&MessageBody=$util.urlEncode($input.body)"
-                },
-                integration_responses=[{
-                    "statusCode": "200",
-                    "responseTemplates": {
-                        "application/json": '{"done": true}'
-                    }
-                }]
-            )
-        ))
-
-        delete_metadata = movies.add_resource("delete-movie-metadata")
-        delete_metadata.add_method("DELETE", apigateway.AwsIntegration(
-            service="sqs",
-            path=f"{core.Aws.ACCOUNT_ID}/{delete_metadata_queue.queue_name}",
-            integration_http_method="POST",
-            options=apigateway.IntegrationOptions(
-                credentials_role=lambda_role,
-                request_parameters={
-                    "integration.request.header.Content-Type": "'application/x-www-form-urlencoded'"
-                },
-                request_templates={
-                    "application/json": "Action=SendMessage&MessageBody=$util.urlEncode($input.body)"
-                },
-                integration_responses=[{
-                    "statusCode": "200",
-                    "responseTemplates": {
-                        "application/json": '{"done": true}'
-                    }
-                }]
-            )
-        ))
-
-        delete_file = movies.add_resource("delete-movie-file")
-        delete_file.add_method("DELETE", apigateway.AwsIntegration(
-            service="sqs",
-            path=f"{core.Aws.ACCOUNT_ID}/{delete_file_queue.queue_name}",
-            integration_http_method="POST",
-            options=apigateway.IntegrationOptions(
-                credentials_role=lambda_role,
-                request_parameters={
-                    "integration.request.header.Content-Type": "'application/x-www-form-urlencoded'"
-                },
-                request_templates={
-                    "application/json": "Action=SendMessage&MessageBody=$util.urlEncode($input.body)"
-                },
-                integration_responses=[{
-                    "statusCode": "200",
-                    "responseTemplates": {
-                        "application/json": '{"done": true}'
-                    }
-                }]
-            )
-        ))
-
-        download_file = movies.add_resource("download-movie-file")
-        download_file.add_method("GET", apigateway.AwsIntegration(
-            service="sqs",
-            path=f"{core.Aws.ACCOUNT_ID}/{download_file_queue.queue_name}",
-            integration_http_method="POST",
-            options=apigateway.IntegrationOptions(
-                credentials_role=lambda_role,
-                request_parameters={
-                    "integration.request.header.Content-Type": "'application/x-www-form-urlencoded'"
-                },
-                request_templates={
-                    "application/json": "Action=SendMessage&MessageBody=$util.urlEncode($input.body)"
-                },
-                integration_responses=[{
-                    "statusCode": "200",
-                    "responseTemplates": {
-                        "application/json": '{"done": true}'
-                    }
-                }]
-            )
-        ))
-
-        get_movies = movies.add_resource("get-all-movies")
-        get_movies.add_method("GET", apigateway.LambdaIntegration(get_movies_lambda))
-
-        get_movie = movies.add_resource("get-movie")
-        get_movie.add_method("GET", apigateway.LambdaIntegration(get_movie_lambda))
-
-        rate_movie = movies.add_resource("rate-movie")
-        rate_movie.add_method("PATCH", apigateway.LambdaIntegration(rate_movie_lambda))
-
-        search_movies = movies.add_resource("search")
-        search_movies.add_method("GET", apigateway.LambdaIntegration(search_movies_lambda))
-
-        update_movie = movies.add_resource("update-movie")
-        update_movie.add_method("PATCH", apigateway.LambdaIntegration(update_movie_lambda))
-
         core.CfnOutput(self, "MovieBucketName", value=movie_bucket.bucket_name)
         core.CfnOutput(self, "NotificationTopicArn", value=notification_topic.topic_arn)
-        core.CfnOutput(self, "ApiGatewayUrl", value=api.url)
-        core.CfnOutput(self, "UserPoolId", value=user_pool.user_pool_id)
-        core.CfnOutput(self, "UserPoolArn", value=user_pool.user_pool_arn)
