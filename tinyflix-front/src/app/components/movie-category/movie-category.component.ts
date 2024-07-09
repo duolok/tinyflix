@@ -13,14 +13,20 @@ import { MovieService } from '../../services/movie.service';
 export class MovieCategoryComponent implements OnInit {
   @Input() title: string = "";
   movies: any[] = []; 
+  recentMovies: any[] = []; 
 
   constructor(private movieService: MovieService) {}
 
   ngOnInit(): void {
     this.movieService.getMovies().subscribe(movies => {
       this.movies = movies;
+      this.recentMovies = this.getRecentMovies();
     });
   }
 
+  getRecentMovies(): any[] {
+    return this.movies
+      .sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())
+      .slice(0, 5);
+  }
 }
-
