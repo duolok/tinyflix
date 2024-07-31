@@ -12,18 +12,8 @@ Before you get started with TinyFlix, make sure you have the following prerequis
 - Python
 - AWS CLI configured with your credentials
 
-## Installation
 
-Clone the TinyFlix repository and navigate into the directory:
-
-```shell
-git clone https://github.com/your-username/tinyflix.git
-cd tinyflix
-python3 -m venv env
-source env/bin/activate
-pip install -r requirements.txt
-```
-## Key Features
+# Key Features
 
 - **Administrator:**
   - Add, edit, and delete movie content.
