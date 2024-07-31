@@ -46,3 +46,9 @@ pip install -r requirements.txt
 - API Gateway integration.
 
 ## Gallery
+![landing](img/landing.jpeg)
+![main](img/main.jpeg)
+![search](img/search.jpeg)
+![are_you_sure](img/aus.jpeg)
+![movies](img/movies.jpeg)
+![subscriptions](img/subscriptions.jpeg)
