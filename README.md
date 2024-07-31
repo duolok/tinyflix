@@ -23,3 +23,26 @@ python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
 ```
+## Key Features
+
+- **Administrator:**
+  - Add, edit, and delete movie content.
+- **Regular User:**
+  - Register, log in, search, view, rate, and subscribe to movie content.
+  - Manage subscriptions and receive personalized content recommendations.
+- **System:**
+  - Transcode movies into different resolutions.
+
+## Components
+
+- **Client Application:** User interface.
+- **Server Application:** Manages business logic and AWS services.
+
+## Requirements
+
+- Cloud-native architecture.
+- Efficient search and performance.
+- Infrastructure as Code (IaC).
+- API Gateway integration.
+
+## Gallery
