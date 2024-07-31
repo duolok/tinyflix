@@ -48,7 +48,8 @@ pip install -r requirements.txt
 ## Gallery
 ![landing](img/landing.jpeg)
 ![main](img/main.jpeg)
-![search](img/search.jpeg)
 ![are_you_sure](img/aus.jpeg)
+![not_found](img/not_found.jpeg)
+![search](img/search.jpeg)
 ![movies](img/movies.jpeg)
 ![subscriptions](img/subscriptions.jpeg)
