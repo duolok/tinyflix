@@ -1,5 +1,6 @@
 ![tinyflix](img/tinyflix.webp)
-# TinyFlix
+
+<h1 align="center"> TinyFlix </h1>
 
 TinyFlix is a Netflix clone for storing and managing movie content, developed using AWS cloud services and following a cloud-native architecture.
 
