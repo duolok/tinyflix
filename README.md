@@ -41,5 +41,5 @@ Before you get started with TinyFlix, make sure you have the following prerequis
 ![are_you_sure](img/aus.jpeg)
 ![not_found](img/not_found.jpeg)
 ![search](img/search.jpeg)
-![movies](img/movies.jpeg)
+![movies](img/movies.png)
 ![subscriptions](img/subscriptions.jpeg)
